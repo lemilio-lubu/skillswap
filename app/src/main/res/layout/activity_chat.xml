@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#6366F1">
-
-    <!-- Header -->
+    android:background="@color/accent_color">    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
+        android:paddingTop="40dp"
         android:gravity="center_vertical">
 
         <ImageView
@@ -21,9 +19,8 @@
             android:src="@drawable/ic_arrow_back"
             android:layout_marginEnd="16dp"
             android:contentDescription="Volver"
-            app:tint="@android:color/white" />
-
-        <TextView
+            app:tint="@android:color/white" />        <TextView
+            android:id="@+id/tv_instructor_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="María García"
@@ -75,10 +72,9 @@
         <ImageButton
             android:id="@+id/btn_send"
             android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_send"
+            android:layout_height="48dp"            android:src="@drawable/ic_send"
             android:background="@drawable/circle_background"
-            android:backgroundTint="#6366F1"
+            android:backgroundTint="@color/accent_color"
             android:contentDescription="Enviar mensaje"
             app:tint="@android:color/white" />
 

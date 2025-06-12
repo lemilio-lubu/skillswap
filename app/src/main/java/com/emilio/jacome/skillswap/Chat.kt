@@ -3,6 +3,7 @@ package com.emilio.jacome.skillswap
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -19,10 +20,24 @@ class Chat : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(layout.activity_chat)
 
-        // Cambiar el RecyclerView por un ScrollView + LinearLayout
+        // Referencias a las vistas
         messagesContainer = findViewById(id.messages_container)
         messageInput = findViewById(id.et_message)
         sendButton = findViewById(id.btn_send)
+        val btnBack = findViewById<ImageView>(id.btn_back)
+        val tvInstructorName = findViewById<TextView>(id.tv_instructor_name)
+        
+        // Obtener datos del intent
+        val instructorName = intent.getStringExtra("instructor_name") ?: "Instructor"
+        val skillTitle = intent.getStringExtra("skill_title") ?: "Habilidad"
+        
+        // Establecer el nombre del instructor en el header
+        tvInstructorName.text = instructorName
+        
+        // Botón de regreso
+        btnBack.setOnClickListener {
+            finish()
+        }
 
         // Botón de enviar
         sendButton.setOnClickListener {
@@ -30,7 +45,7 @@ class Chat : AppCompatActivity() {
         }
 
         // Cargar mensajes de ejemplo
-        loadSampleMessages()
+        loadSampleMessages(instructorName, skillTitle)
     }
 
     private fun sendMessage() {
@@ -55,11 +70,9 @@ class Chat : AppCompatActivity() {
         messageView.findViewById<TextView>(id.tv_time).text = time
         messagesContainer.addView(messageView)
         scrollToBottom()
-    }
-
-    private fun loadSampleMessages() {
-        addReceivedMessage("¡Hola! Vi que necesitas ayuda con matemáticas. ¿En qué tema específico te gustaría que te apoye?", "10:30 AM")
-        addSentMessage("Hola María! Tengo dificultades con derivadas e integrales. ¿Podrías ayudarme?", "10:32 AM")
+    }    private fun loadSampleMessages(instructorName: String, skillTitle: String) {
+        addReceivedMessage("¡Hola! Vi que necesitas ayuda con $skillTitle. ¿En qué tema específico te gustaría que te apoye?", "10:30 AM")
+        addSentMessage("Hola $instructorName! Tengo dificultades con algunos conceptos básicos. ¿Podrías ayudarme?", "10:32 AM")
         addReceivedMessage("¡Por supuesto! Ese es mi fuerte. ¿Cuándo te gustaría programar una sesión?", "10:35 AM")
     }
 

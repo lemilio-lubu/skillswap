@@ -14,22 +14,21 @@
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SkillSwap"
-        android:textColor="#6366F1"
+        android:layout_height="wrap_content"        android:text="SkillSwap"
+        android:textColor="@color/accent_color"
         android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.176" />
-
-    <TextView
+        app:layout_constraintVertical_bias="0.176" />    <TextView
         android:id="@+id/tvPasswordLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="28dp"
+        android:layout_marginEnd="16dp"
         android:text="Contraseña"
         android:textColor="#374151"
         android:textSize="14sp"
@@ -43,9 +42,8 @@
         android:id="@+id/tvForgotPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:text="¿Olvidaste tu contraseña?"
-        android:textColor="#6366F1"
+        android:layout_marginTop="36dp"        android:text="¿Olvidaste tu contraseña?"
+        android:textColor="@color/accent_color"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.451"
@@ -56,20 +54,19 @@
         android:id="@+id/tvRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:text="¿No tienes cuenta? Regístrate"
-        android:textColor="#6366F1"
+        android:layout_marginTop="36dp"        android:text="¿No tienes cuenta? Regístrate"
+        android:textColor="@color/accent_color"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.447"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvForgotPassword" />
-
-    <Button
+        app:layout_constraintTop_toBottomOf="@id/tvForgotPassword" />    <Button
         android:id="@+id/btnLogin"
         android:layout_width="0dp"
         android:layout_height="48dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="Iniciar Sesión"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
@@ -77,13 +74,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etPassword" />
-
-    <EditText
+        app:layout_constraintTop_toBottomOf="@id/etPassword" /><EditText
         android:id="@+id/etPassword"
         android:layout_width="0dp"
         android:layout_height="48dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/edittext_background"
         android:hint="••••••••"
         android:inputType="textPassword"
@@ -91,13 +88,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvPasswordLabel" />
-
-    <TextView
+        app:layout_constraintTop_toBottomOf="@id/tvPasswordLabel" /><TextView
         android:id="@+id/tvEmailLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="52dp"
+        android:layout_marginEnd="16dp"
         android:text="Email"
         android:textColor="#374151"
         android:textSize="14sp"
@@ -111,7 +108,9 @@
         android:id="@+id/etEmail"
         android:layout_width="0dp"
         android:layout_height="48dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/edittext_background"
         android:hint="tu@email.com"
         android:inputType="textEmailAddress"

@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#6366F1">
-
-    <!-- Header -->
+    xmlns:app="http://schemas.android.com/apk/res-auto"    android:layout_width="match_parent"
+    android:layout_height="match_parent"    android:orientation="vertical"
+    android:background="@color/accent_color">    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
+        android:paddingTop="40dp"
         android:gravity="center_vertical">
 
         <ImageView
@@ -60,23 +57,22 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:layout_marginBottom="32dp">
-
-                <!-- Avatar -->
+                android:layout_marginBottom="32dp">                <!-- Avatar -->
                 <TextView
+                    android:id="@+id/tv_avatar"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:text="MG"
                     android:textColor="@android:color/white"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
+                    android:textSize="24sp"                    android:textStyle="bold"
                     android:background="@drawable/circle_background"
-                    android:backgroundTint="#6366F1"
+                    android:backgroundTint="@color/accent_color"
                     android:gravity="center"
                     android:layout_marginBottom="16dp" />
 
                 <!-- Name -->
                 <TextView
+                    android:id="@+id/tv_instructor_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="María García"
@@ -128,10 +124,9 @@
                 android:background="@drawable/rounded_card_background"
                 android:backgroundTint="#F9FAFB"
                 android:padding="20dp"
-                android:layout_marginBottom="24dp">
-
-                <!-- Subject Title -->
+                android:layout_marginBottom="24dp">                <!-- Subject Title -->
                 <TextView
+                    android:id="@+id/tv_skill_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Matemáticas Básicas"
@@ -149,9 +144,8 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="$5/hora"
-                        android:textColor="#6366F1"
+                        android:layout_height="wrap_content"                        android:text="$5/hora"
+                        android:textColor="@color/accent_color"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -167,10 +161,9 @@
                         android:textColor="#6B7280"
                         android:textSize="12sp" />
 
-                </LinearLayout>
-
-                <!-- Description -->
+                </LinearLayout>                <!-- Description -->
                 <TextView
+                    android:id="@+id/tv_skill_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ayudo con álgebra, geometría y cálculo básico. Con experiencia enseñando a estudiantes de bachillerato y primeros años universitarios. Mi metodología se basa en explicaciones claras y práctica constante."
@@ -203,11 +196,10 @@
             <Button
                 android:id="@+id/btn_contactar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/contactar_tutor"
+                android:layout_height="wrap_content"                android:text="@string/contactar_tutor"
                 android:textColor="@android:color/white"
                 android:background="@drawable/rounded_button"
-                android:backgroundTint="#6366F1"
+                android:backgroundTint="@color/accent_color"
                 android:padding="16dp"
                 android:textSize="16sp"
                 android:textStyle="bold" />

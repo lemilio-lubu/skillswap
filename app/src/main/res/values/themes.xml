@@ -2,8 +2,25 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.SkillSwap" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/accent_color</item>
+        <item name="colorPrimaryVariant">@color/accent_color</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="android:statusBarColor">@color/accent_color</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <!-- No forzar edge-to-edge -->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 
     <style name="Theme.SkillSwap" parent="Base.Theme.SkillSwap" />
+    
+    <!-- Estilo para headers que evita superposición con barra de estado -->
+    <style name="HeaderStyle">
+        <item name="android:background">@color/accent_color</item>
+        <item name="android:paddingTop">40dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+    </style>
 </resources>
