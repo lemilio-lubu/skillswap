@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SkillSwap</string>
+    <string name="contactar_tutor">Contactar Tutor</string>
+    <string name="explicaci_n_te_rica_n_ejercicios_pr_cticos_n_material_de_apoyo">• Explicación teórica\n• Ejercicios prácticos\n• Material de apoyo</string>
+    <string name="modalidad_virtual_y_presencial">Modalidad: Virtual y Presencial</string>
+    <string name="detalle">Detalle</string>
 </resources>

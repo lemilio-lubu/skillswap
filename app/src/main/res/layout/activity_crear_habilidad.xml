@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#6366F1">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back"
+            android:layout_marginEnd="16dp"
+            android:tint="@android:color/white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nueva Habilidad"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/rounded_top_background"
+        android:backgroundTint="@android:color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Título de la habilidad -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Título de la habilidad"
+                android:textColor="#374151"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/et_titulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="ej. Matemáticas para bachillerato"
+                android:padding="16dp"
+                android:background="@drawable/rounded_edittext"
+                android:textColorHint="#9CA3AF"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Categoría -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Categoría"
+                android:textColor="#374151"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/spinner_categoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:background="@drawable/rounded_spinner"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Descripción -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Descripción"
+                android:textColor="#374151"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/et_descripcion"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:hint="Describe qué enseñas, tu metodología y experiencia..."
+                android:padding="16dp"
+                android:background="@drawable/rounded_edittext"
+                android:textColorHint="#9CA3AF"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Precio por hora -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Precio por hora ($)"
+                android:textColor="#374151"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <EditText
+                android:id="@+id/et_precio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="10"
+                android:padding="16dp"
+                android:background="@drawable/rounded_edittext"
+                android:textColorHint="#9CA3AF"
+                android:inputType="numberDecimal"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Modalidad -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Modalidad"
+                android:textColor="#374151"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/spinner_modalidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:background="@drawable/rounded_spinner"
+                android:layout_marginBottom="32dp" />
+
+            <!-- Botón -->
+            <Button
+                android:id="@+id/btn_agregar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Agregar Nueva Habilidad"
+                android:textColor="@android:color/white"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="#6366F1"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
