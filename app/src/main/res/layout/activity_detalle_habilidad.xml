@@ -190,15 +190,12 @@
                     android:textSize="12sp"
                     android:lineSpacingExtra="2dp" />
 
-            </LinearLayout>
-
-            <!-- Contact Button -->
+            </LinearLayout>            <!-- Contact Button -->
             <Button
                 android:id="@+id/btn_contactar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"                android:text="@string/contactar_tutor"
                 android:textColor="@android:color/white"
-                android:background="@drawable/rounded_button"
                 android:backgroundTint="@color/accent_color"
                 android:padding="16dp"
                 android:textSize="16sp"
