@@ -64,9 +64,7 @@
             android:text="🔍"
             android:textSize="16sp"
             android:gravity="center"
-            android:layout_marginEnd="8dp" />
-
-        <EditText
+            android:layout_marginEnd="8dp" />        <EditText
             android:id="@+id/et_buscar"
             android:layout_width="364dp"
             android:layout_height="49dp"
@@ -74,8 +72,8 @@
             android:background="@android:color/transparent"
             android:hint="Buscar habilidades..."
             android:inputType="text"
-            android:textColor="#333333"
-            android:textColorHint="#999999"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint"
             android:textSize="16sp" />
 
     </LinearLayout>

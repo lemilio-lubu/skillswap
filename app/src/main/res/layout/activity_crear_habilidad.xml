@@ -51,16 +51,15 @@
                 android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
+                android:layout_marginBottom="8dp" />            <EditText
                 android:id="@+id/et_titulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="ej. Matemáticas para bachillerato"
                 android:padding="16dp"
                 android:background="@drawable/rounded_edittext"
-                android:textColorHint="#9CA3AF"
+                android:textColorHint="@color/text_hint"
+                android:textColor="@color/text_primary"
                 android:layout_marginBottom="24dp" />
 
             <!-- Categoría -->
@@ -89,16 +88,15 @@
                 android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
+                android:layout_marginBottom="8dp" />            <EditText
                 android:id="@+id/et_descripcion"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:hint="Describe qué enseñas, tu metodología y experiencia..."
                 android:padding="16dp"
                 android:background="@drawable/rounded_edittext"
-                android:textColorHint="#9CA3AF"
+                android:textColorHint="@color/text_hint"
+                android:textColor="@color/text_primary"
                 android:gravity="top"
                 android:inputType="textMultiLine"
                 android:layout_marginBottom="24dp" />
@@ -111,16 +109,15 @@
                 android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
+                android:layout_marginBottom="8dp" />            <EditText
                 android:id="@+id/et_precio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="10"
                 android:padding="16dp"
                 android:background="@drawable/rounded_edittext"
-                android:textColorHint="#9CA3AF"
+                android:textColorHint="@color/text_hint"
+                android:textColor="@color/text_primary"
                 android:inputType="numberDecimal"
                 android:layout_marginBottom="24dp" />
 

@@ -57,13 +57,12 @@
                 android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
+                android:layout_marginBottom="8dp" />            <EditText
                 android:id="@+id/et_titulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="JavaScript Avanzado"
+                android:textColor="@color/text_primary"
                 android:padding="16dp"
                 android:background="@drawable/rounded_edittext"
                 android:layout_marginBottom="24dp" />
@@ -94,13 +93,12 @@
                 android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
+                android:layout_marginBottom="8dp" />            <EditText
                 android:id="@+id/et_descripcion"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:text="Enseño JavaScript moderno, React, Node.js y desarrollo web."
+                android:textColor="@color/text_primary"
                 android:padding="16dp"
                 android:background="@drawable/rounded_edittext"
                 android:gravity="top"
@@ -115,13 +113,12 @@
                 android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
+                android:layout_marginBottom="8dp" />            <EditText
                 android:id="@+id/et_precio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="10"
+                android:textColor="@color/text_primary"
                 android:padding="16dp"
                 android:background="@drawable/rounded_edittext"
                 android:inputType="numberDecimal"

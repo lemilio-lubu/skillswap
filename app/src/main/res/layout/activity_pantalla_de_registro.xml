@@ -60,15 +60,13 @@
                 android:text="Nombre Completo"
                 android:textColor="#333333"
                 android:textSize="14sp"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
+                android:layout_marginBottom="8dp" />            <EditText
                 android:id="@+id/et_nombre_completo"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="Juan Perez"
-                android:textColorHint="#999999"
-                android:textColor="#333333"
+                android:textColorHint="@color/text_hint"
+                android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -84,15 +82,13 @@
                 android:text="Email"
                 android:textColor="#333333"
                 android:textSize="14sp"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
+                android:layout_marginBottom="8dp" />            <EditText
                 android:id="@+id/et_email"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="juan@email.com"
-                android:textColorHint="#999999"
-                android:textColor="#333333"
+                android:textColorHint="@color/text_hint"
+                android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -108,15 +104,13 @@
                 android:text="Universidad/Institución"
                 android:textColor="#333333"
                 android:textSize="14sp"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
+                android:layout_marginBottom="8dp" />            <EditText
                 android:id="@+id/et_universidad"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="Universidad Nacional"
-                android:textColorHint="#999999"
-                android:textColor="#333333"
+                android:textColorHint="@color/text_hint"
+                android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -132,15 +126,13 @@
                 android:text="Contraseña"
                 android:textColor="#333333"
                 android:textSize="14sp"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
+                android:layout_marginBottom="8dp" />            <EditText
                 android:id="@+id/et_contrasena"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="••••••••••••"
-                android:textColorHint="#999999"
-                android:textColor="#333333"
+                android:textColorHint="@color/text_hint"
+                android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
@@ -156,15 +148,13 @@
                 android:text="Confirmar contraseña"
                 android:textColor="#333333"
                 android:textSize="14sp"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
+                android:layout_marginBottom="8dp" />            <EditText
                 android:id="@+id/et_confirmar_contrasena"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:hint="••••••••••••"
-                android:textColorHint="#999999"
-                android:textColor="#333333"
+                android:textColorHint="@color/text_hint"
+                android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"

@@ -74,7 +74,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etPassword" /><EditText
+        app:layout_constraintTop_toBottomOf="@id/etPassword" />    <EditText
         android:id="@+id/etPassword"
         android:layout_width="0dp"
         android:layout_height="48dp"
@@ -83,6 +83,8 @@
         android:layout_marginEnd="16dp"
         android:background="@drawable/edittext_background"
         android:hint="••••••••"
+        android:textColorHint="@color/text_hint"
+        android:textColor="@color/text_primary"
         android:inputType="textPassword"
         android:padding="12dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -102,9 +104,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSubtitle" />
-
-    <EditText
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle" />    <EditText
         android:id="@+id/etEmail"
         android:layout_width="0dp"
         android:layout_height="48dp"
@@ -113,6 +113,8 @@
         android:layout_marginEnd="16dp"
         android:background="@drawable/edittext_background"
         android:hint="tu@email.com"
+        android:textColorHint="@color/text_hint"
+        android:textColor="@color/text_primary"
         android:inputType="textEmailAddress"
         android:padding="12dp"
         app:layout_constraintEnd_toEndOf="parent"
