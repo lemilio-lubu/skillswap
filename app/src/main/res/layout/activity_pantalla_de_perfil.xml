@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    tools:context=".Perfil">
+
+    <!-- Header con título y configuración -->
+    <LinearLayout
+        android:id="@+id/header_layout"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="#5B7CE6"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/btn_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:text="←"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Volver" />
+
+        <TextView
+            android:id="@+id/tv_titulo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Mi perfil"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginStart="16dp" />
+
+        <TextView
+            android:id="@+id/btn_configuracion"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:text="⚙"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Configuración" />
+
+    </LinearLayout>
+
+    <!-- Contenedor principal -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/header_layout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:padding="24dp">
+
+            <!-- Avatar y información del usuario -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginBottom="32dp">
+
+                <TextView
+                    android:id="@+id/avatar"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:text="JD"
+                    android:textColor="@android:color/white"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    android:background="#5B7CE6"
+                    android:gravity="center"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:id="@+id/nombre_usuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mi perfil"
+                    android:textColor="#333333"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:id="@+id/universidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Universidad Nacional"
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/estrella"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:text="⭐"
+                        android:textSize="12sp"
+                        android:gravity="center"
+                        android:layout_marginEnd="4dp" />
+
+                    <TextView
+                        android:id="@+id/calificacion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4.8 (25 reseñas)"
+                        android:textColor="#666666"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Título Mis habilidades -->
+            <TextView
+                android:id="@+id/titulo_habilidades"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mis habilidades"
+                android:textColor="#333333"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Card JavaScript -->
+            <LinearLayout
+                android:id="@+id/card_javascript"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#F8F9FF"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:id="@+id/titulo_javascript"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="JavaScript Avanzado"
+                    android:textColor="#333333"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/descripcion_javascript"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Enseño React, Node.js y desarrollo web moderno."
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/estudiantes_javascript"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="5 estudiantes activos"
+                        android:textColor="#999999"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/precio_javascript"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$7/hora"
+                        android:textColor="#5B7CE6"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Card Diseño UX/UI -->
+            <LinearLayout
+                android:id="@+id/card_diseno"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#F8F9FF"
+                android:padding="16dp"
+                android:layout_marginBottom="24dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:id="@+id/titulo_diseno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Diseño UX/UI"
+                    android:textColor="#333333"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/descripcion_diseno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aprende diseño centrado en el usuario y herramientas como Figma."
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/estudiantes_diseno"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="3 estudiantes activos"
+                        android:textColor="#999999"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/precio_diseno"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$9/hora"
+                        android:textColor="#5B7CE6"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Botón Agregar Nueva Habilidad -->
+            <Button
+                android:id="@+id/btn_agregar_habilidad"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Agregar Nueva Habilidad"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:backgroundTint="#5B7CE6"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
