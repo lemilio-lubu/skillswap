@@ -50,9 +50,51 @@ object FirebaseManager {
     }
     
     /**
+     * Get current user display name
+     */
+    fun getCurrentUserDisplayName(): String? {
+        return auth.currentUser?.displayName
+    }
+    
+    /**
+     * Check if current user's email is verified
+     */
+    fun isEmailVerified(): Boolean {
+        return auth.currentUser?.isEmailVerified ?: false
+    }
+    
+    /**
+     * Send email verification to current user
+     */
+    fun sendEmailVerification(callback: (Boolean, String?) -> Unit) {
+        auth.currentUser?.sendEmailVerification()
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(true, null)
+                } else {
+                    callback(false, task.exception?.message)
+                }
+            }
+    }
+    
+    /**
      * Sign out current user
      */
     fun signOut() {
         auth.signOut()
+    }
+    
+    /**
+     * Add authentication state listener
+     */
+    fun addAuthStateListener(listener: FirebaseAuth.AuthStateListener) {
+        auth.addAuthStateListener(listener)
+    }
+    
+    /**
+     * Remove authentication state listener
+     */
+    fun removeAuthStateListener(listener: FirebaseAuth.AuthStateListener) {
+        auth.removeAuthStateListener(listener)
     }
 }
