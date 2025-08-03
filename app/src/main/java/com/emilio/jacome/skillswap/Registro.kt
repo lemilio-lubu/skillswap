@@ -8,7 +8,9 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.emilio.jacome.skillswap.model.Skill
 import com.emilio.jacome.skillswap.model.User
+import com.emilio.jacome.skillswap.utils.SkillRepository
 
 class Registro : AppCompatActivity() {
     
@@ -166,6 +168,8 @@ class Registro : AppCompatActivity() {
             .set(user)
             .addOnSuccessListener {
                 // User document created successfully
+                // Create a sample skill for new users
+                createSampleSkill(uid, nombre, universidad)
                 showSuccess("¡Cuenta creada exitosamente!")
                 navigateToMainApp()
             }
@@ -173,6 +177,24 @@ class Registro : AppCompatActivity() {
                 showError("Error al crear perfil: ${exception.message}")
                 resetButton()
             }
+    }
+    
+    private fun createSampleSkill(userId: String, userName: String, universidad: String) {
+        val sampleSkill = Skill(
+            title = "Tutoría Académica",
+            description = "Ayudo con materias de $universidad. Disponible para resolver dudas y dar apoyo académico.",
+            category = "Educación",
+            price = 5.0,
+            userId = userId,
+            userName = userName,
+            userAvatar = "",
+            rating = 0.0,
+            reviewCount = 0,
+            isActive = true
+        )
+        
+        // Create the skill asynchronously (don't wait for it)
+        SkillRepository.createSkill(sampleSkill)
     }
     
     private fun handleRegistrationError(exception: Exception?) {
