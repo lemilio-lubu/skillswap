@@ -50,6 +50,9 @@ class Perfil : AppCompatActivity() {
         
         // For dynamic skills, we'll use the main container for now
         skillsContainer = findViewById(R.id.main)
+        
+        // Hide content initially to prevent data flicker
+        hideProfileContent()
     }
     
     private fun setupClickListeners() {
@@ -88,15 +91,18 @@ class Perfil : AppCompatActivity() {
                     currentUser?.let { user ->
                         updateUserUI(user)
                         loadUserSkills(userId)
+                        showProfileContent() // Show content when data loads
                     }
                 } else {
                     showError("Perfil de usuario no encontrado")
                     showLoadingState(false)
+                    showProfileContent() // Show content even on error
                 }
             }
             .addOnFailureListener { exception ->
                 showError("Error al cargar perfil: ${exception.message}")
                 showLoadingState(false)
+                showProfileContent() // Show content even on error
             }
     }
     
@@ -202,10 +208,38 @@ class Perfil : AppCompatActivity() {
     
     private fun showLoadingState(isLoading: Boolean) {
         if (isLoading) {
+            hideProfileContent()
+            // Show loading indicators
             nombreUsuario.text = "Cargando..."
+            nombreUsuario.visibility = View.VISIBLE
             universidad.text = "Cargando..."
+            universidad.visibility = View.VISIBLE
             calificacion.text = "Cargando..."
+            calificacion.visibility = View.VISIBLE
         }
+    }
+    
+    private fun hideProfileContent() {
+        // Hide profile elements to prevent flicker
+        avatar.visibility = View.INVISIBLE
+        nombreUsuario.visibility = View.INVISIBLE
+        universidad.visibility = View.INVISIBLE
+        calificacion.visibility = View.INVISIBLE
+        
+        // Hide skill cards
+        findViewById<LinearLayout>(R.id.card_javascript)?.visibility = View.GONE
+        findViewById<LinearLayout>(R.id.card_diseno)?.visibility = View.GONE
+        
+        btnAgregarHabilidad.visibility = View.INVISIBLE
+    }
+    
+    private fun showProfileContent() {
+        // Show all profile elements
+        avatar.visibility = View.VISIBLE
+        nombreUsuario.visibility = View.VISIBLE
+        universidad.visibility = View.VISIBLE
+        calificacion.visibility = View.VISIBLE
+        btnAgregarHabilidad.visibility = View.VISIBLE
     }
     
     private fun showError(message: String) {
