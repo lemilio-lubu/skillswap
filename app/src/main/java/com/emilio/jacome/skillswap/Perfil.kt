@@ -3,6 +3,7 @@ package com.emilio.jacome.skillswap
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -22,7 +23,7 @@ class Perfil : AppCompatActivity() {
     private lateinit var nombreUsuario: TextView
     private lateinit var universidad: TextView
     private lateinit var calificacion: TextView
-    private lateinit var skillsContainer: LinearLayout
+    private lateinit var skillsContainer: ViewGroup
     private lateinit var btnAgregarHabilidad: Button
     
     private var currentUser: User? = null
@@ -47,20 +48,21 @@ class Perfil : AppCompatActivity() {
         universidad = findViewById(R.id.universidad)
         calificacion = findViewById(R.id.calificacion)
         
-        // For dynamic skills, we'll need to find the container
-        skillsContainer = findViewById(R.id.main) // We'll add skills dynamically
+        // For dynamic skills, we'll use the main container for now
+        skillsContainer = findViewById(R.id.main)
     }
     
     private fun setupClickListeners() {
         val btnBack = findViewById<TextView>(R.id.btn_back)
-        val btnConfiguracion = findViewById<TextView>(R.id.btn_configuracion)
+        val btnLogout = findViewById<TextView>(R.id.btn_configuracion) // Changed from config to logout
         
         btnBack.setOnClickListener {
             finish()
         }
         
-        btnConfiguracion.setOnClickListener {
-            showConfigurationOptions()
+        btnLogout.setOnClickListener {
+            // Direct logout prompt - no config menu
+            showLogoutConfirmation()
         }
         
         btnAgregarHabilidad.setOnClickListener {
@@ -173,23 +175,19 @@ class Perfil : AppCompatActivity() {
     }
     
     private fun updateSkillCard(card: LinearLayout, skill: Skill) {
-        // Find TextViews within the card and update them
-        val titleView = card.findViewWithTag<TextView>("skill_title")
-        val descriptionView = card.findViewWithTag<TextView>("skill_description")
-        val priceView = card.findViewWithTag<TextView>("skill_price")
+        // Find TextViews within the card and update them by ID
+        val titleView = card.findViewById<TextView>(R.id.titulo_javascript) ?: card.findViewById<TextView>(R.id.titulo_diseno)
+        val descriptionView = card.findViewById<TextView>(R.id.descripcion_javascript) ?: card.findViewById<TextView>(R.id.descripcion_diseno)
+        val priceView = card.findViewById<TextView>(R.id.precio_javascript) ?: card.findViewById<TextView>(R.id.precio_diseno)
         
-        // If tags don't exist, find by typical positions
-        if (titleView == null && card.childCount > 0) {
-            val firstChild = card.getChildAt(0)
-            if (firstChild is TextView) {
-                firstChild.text = skill.title
-            }
-        } else {
-            titleView?.text = skill.title
-        }
-        
+        // Update the views with skill data
+        titleView?.text = skill.title
         descriptionView?.text = skill.description
         priceView?.text = skill.getFormattedPrice()
+        
+        // Update students count if available
+        val studentsView = card.findViewById<TextView>(R.id.estudiantes_javascript) ?: card.findViewById<TextView>(R.id.estudiantes_diseno)
+        studentsView?.text = "0 estudiantes" // Default for now
     }
     
     private fun editSkill(skill: Skill) {
@@ -212,20 +210,6 @@ class Perfil : AppCompatActivity() {
     
     private fun showError(message: String) {
         UIHelper.showLongToast(this, message)
-    }
-    
-    private fun showConfigurationOptions() {
-        val options = arrayOf("Cerrar sesión")
-        
-        AlertDialog.Builder(this)
-            .setTitle("Configuración")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> showLogoutConfirmation()
-                }
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
     }
     
     private fun showLogoutConfirmation() {
