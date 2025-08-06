@@ -9,6 +9,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.emilio.jacome.skillswap.model.Skill
+import com.emilio.jacome.skillswap.utils.Constants
 import com.emilio.jacome.skillswap.utils.SkillRepository
 
 class CrearHabilidad : AppCompatActivity() {
@@ -29,14 +30,12 @@ class CrearHabilidad : AppCompatActivity() {
         val spinnerModalidad = findViewById<Spinner>(R.id.spinner_modalidad)
 
         // Configurar spinner de categorías
-        val categorias = arrayOf("Matemáticas", "Programación", "Idiomas", "Diseño", "Música", "Deportes", "Otros")
-        val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, categorias)
+        val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Categories.LIST)
         adapterCategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCategoria.adapter = adapterCategorias
 
         // Configurar spinner de modalidad
-        val modalidades = arrayOf("Selecciona una modalidad", "Presencial", "Virtual")
-        val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, modalidades)
+        val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Modalities.LIST_WITH_DEFAULT)
         adapterModalidad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerModalidad.adapter = adapterModalidad
 
@@ -72,7 +71,7 @@ class CrearHabilidad : AppCompatActivity() {
                         descripcion,
                         precioText.toDouble(),
                         categoria,
-                        modalidades[modalidadIndex]
+                        Constants.Modalities.LIST_WITH_DEFAULT[modalidadIndex]
                     )
                 }
             }

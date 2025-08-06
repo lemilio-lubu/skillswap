@@ -10,6 +10,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.emilio.jacome.skillswap.utils.Constants
 import com.emilio.jacome.skillswap.utils.SkillRepository
 
 class EditarHabilidad : AppCompatActivity() {
@@ -37,14 +38,12 @@ class EditarHabilidad : AppCompatActivity() {
         val tvSesionesCompletadas = findViewById<TextView>(R.id.tv_sesiones_completadas)
 
         // Configurar spinner de categorías
-        val categorias = arrayOf("Matemáticas", "Programación", "Idiomas", "Diseño", "Música", "Deportes", "Otros")
-        val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, categorias)
+        val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Categories.LIST)
         adapterCategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCategoria.adapter = adapterCategorias
 
         // Configurar spinner de modalidad
-        val modalidades = arrayOf("Presencial", "Virtual")
-        val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, modalidades)
+        val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Modalities.LIST)
         adapterModalidad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerModalidad.adapter = adapterModalidad
 
@@ -54,7 +53,7 @@ class EditarHabilidad : AppCompatActivity() {
         val skillDescription = intent.getStringExtra("skill_description") ?: ""
         val skillCategory = intent.getStringExtra("skill_category") ?: "Programación"
         val skillPrice = intent.getStringExtra("skill_price") ?: "0"
-        val skillModalidad = intent.getStringExtra("skill_modalidad") ?: "Presencial"
+        val skillModalidad = intent.getStringExtra("skill_modalidad") ?: Constants.Modalities.PRESENCIAL
         skillRating = intent.getDoubleExtra("skill_rating", 0.0)
         skillReviewCount = intent.getIntExtra("skill_review_count", 0)
         skillSesionesCompletadas = intent.getIntExtra("skill_sesiones_completadas", 0)
@@ -64,13 +63,13 @@ class EditarHabilidad : AppCompatActivity() {
         etPrecio.setText(skillPrice)
         
         // Seleccionar la categoría actual en el spinner
-        val categoryPosition = categorias.indexOf(skillCategory)
+        val categoryPosition = Constants.Categories.LIST.indexOf(skillCategory)
         if (categoryPosition >= 0) {
             spinnerCategoria.setSelection(categoryPosition)
         }
         
         // Seleccionar la modalidad actual en el spinner
-        val modalityPosition = modalidades.indexOf(skillModalidad)
+        val modalityPosition = Constants.Modalities.LIST.indexOf(skillModalidad)
         if (modalityPosition >= 0) {
             spinnerModalidad.setSelection(modalityPosition)
         }
