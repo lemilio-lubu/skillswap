@@ -59,8 +59,8 @@ class Inicio : AppCompatActivity() {
         
         // Disable button to prevent multiple clicks
         btnLogin.isEnabled = false
-        btnLogin.text = "Iniciando sesión..."
-        
+        btnLogin.text = getString(R.string.btn_login_progress)
+
         // Login with Firebase Auth
         AuthenticationHelper.login(email, password)
             .addOnCompleteListener(this) { task ->
@@ -68,7 +68,7 @@ class Inicio : AppCompatActivity() {
                     // Login successful
                     val user = task.result?.user
                     if (user != null) {
-                        showSuccess("¡Bienvenido!")
+                        showSuccess(getString(R.string.welcome_message))
                         navigateToMainApp()
                     }
                 } else {
@@ -83,17 +83,17 @@ class Inicio : AppCompatActivity() {
     private fun validateInput(email: String, password: String): Boolean {
         return when {
             email.isEmpty() -> {
-                showError("Por favor ingresa tu email")
+                showError(getString(R.string.error_empty_email))
                 etEmail.requestFocus()
                 false
             }
             !AuthenticationHelper.isValidEmail(email) -> {
-                showError("Por favor ingresa un email válido")
+                showError(getString(R.string.error_invalid_email))
                 etEmail.requestFocus()
                 false
             }
             password.isEmpty() -> {
-                showError("Por favor ingresa tu contraseña")
+                showError(getString(R.string.error_empty_password))
                 etPassword.requestFocus()
                 false
             }
@@ -105,13 +105,13 @@ class Inicio : AppCompatActivity() {
         val email = etEmail.text.toString().trim()
         
         if (email.isEmpty()) {
-            showError("Por favor ingresa tu email para recuperar la contraseña")
+            showError(getString(R.string.error_empty_email_reset))
             etEmail.requestFocus()
             return
         }
         
         if (!AuthenticationHelper.isValidEmail(email)) {
-            showError("Por favor ingresa un email válido")
+            showError(getString(R.string.error_invalid_email))
             etEmail.requestFocus()
             return
         }
@@ -119,10 +119,10 @@ class Inicio : AppCompatActivity() {
         AuthenticationHelper.resetPassword(email)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    showSuccess("Se ha enviado un email para restablecer tu contraseña")
+                    showSuccess(getString(R.string.reset_password_email_sent))
                 } else {
                     val errorMessage = AuthenticationHelper.getAuthErrorMessage(task.exception)
-                    showError("Error al enviar email: $errorMessage")
+                    showError(getString(R.string.error_reset_password, errorMessage))
                 }
             }
     }
@@ -137,7 +137,7 @@ class Inicio : AppCompatActivity() {
     
     private fun resetButton() {
         btnLogin.isEnabled = true
-        btnLogin.text = "Iniciar sesión"
+        btnLogin.text = getString(R.string.btn_login)
     }
     
     private fun navigateToMainApp() {

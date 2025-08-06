@@ -5,6 +5,25 @@
     <string name="modalidad_virtual_y_presencial">Modalidad: Virtual y Presencial</string>
     <string name="detalle">Detalle</string>
 
+    <!-- Pantalla de inicio -->
+    <string name="app_title">SkillSwap</string>
+    <string name="app_subtitle">Intercambia conocimiento</string>
+    <string name="email_label">Email</string>
+    <string name="email_hint">tu@email.com</string>
+    <string name="password_label">Contraseña</string>
+    <string name="password_hint">••••••••</string>
+    <string name="btn_login">Iniciar Sesión</string>
+    <string name="btn_login_progress">Iniciando sesión...</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="register_prompt">¿No tienes cuenta? Regístrate</string>
+    <string name="welcome_message">¡Bienvenido!</string>
+    <string name="error_empty_email">Por favor ingresa tu email</string>
+    <string name="error_invalid_email">Por favor ingresa un email válido</string>
+    <string name="error_empty_password">Por favor ingresa tu contraseña</string>
+    <string name="reset_password_email_sent">Se ha enviado un email para restablecer tu contraseña</string>
+    <string name="error_reset_password">Error al enviar email: %1$s</string>
+    <string name="error_empty_email_reset">Por favor ingresa tu email para recuperar la contraseña</string>
+
     <!-- CrearHabilidad -->
     <string name="nueva_habilidad">Nueva Habilidad</string>
     <string name="titulo_habilidad">Título de la habilidad</string>
