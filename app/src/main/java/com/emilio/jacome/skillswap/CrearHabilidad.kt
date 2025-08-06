@@ -55,16 +55,16 @@ class CrearHabilidad : AppCompatActivity() {
 
             when {
                 titulo.isEmpty() -> {
-                    Toast.makeText(this, "Por favor ingresa un título", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.error_titulo_vacio), Toast.LENGTH_SHORT).show()
                 }
                 descripcion.isEmpty() -> {
-                    Toast.makeText(this, "Por favor ingresa una descripción", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.error_descripcion_vacia), Toast.LENGTH_SHORT).show()
                 }
                 precioText.isEmpty() -> {
-                    Toast.makeText(this, "Por favor ingresa un precio", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.error_precio_vacio), Toast.LENGTH_SHORT).show()
                 }
                 modalidadIndex == 0 -> {
-                    Toast.makeText(this, "Por favor selecciona una modalidad", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.error_modalidad_no_seleccionada), Toast.LENGTH_SHORT).show()
                 }
                 else -> {
                     crearNuevaHabilidad(
@@ -85,7 +85,7 @@ class CrearHabilidad : AppCompatActivity() {
         val userName = FirebaseManager.getCurrentUserDisplayName() ?: "Usuario"
 
         if (userId == null) {
-            Toast.makeText(this, "Error: No se pudo identificar al usuario", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_usuario_no_identificado), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -104,11 +104,11 @@ class CrearHabilidad : AppCompatActivity() {
 
         SkillRepository.createSkill(skill)
             .addOnSuccessListener {
-                Toast.makeText(this, "¡Habilidad creada exitosamente!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.habilidad_creada_exito), Toast.LENGTH_SHORT).show()
                 finish()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Error al crear habilidad: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.error_crear_habilidad, e.message), Toast.LENGTH_LONG).show()
                 btnAgregar.isEnabled = true
             }
     }

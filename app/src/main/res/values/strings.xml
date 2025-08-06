@@ -4,4 +4,44 @@
     <string name="explicaci_n_te_rica_n_ejercicios_pr_cticos_n_material_de_apoyo">• Explicación teórica\n• Ejercicios prácticos\n• Material de apoyo</string>
     <string name="modalidad_virtual_y_presencial">Modalidad: Virtual y Presencial</string>
     <string name="detalle">Detalle</string>
+
+    <!-- CrearHabilidad -->
+    <string name="nueva_habilidad">Nueva Habilidad</string>
+    <string name="titulo_habilidad">Título de la habilidad</string>
+    <string name="hint_titulo">ej. Matemáticas para bachillerato</string>
+    <string name="categoria">Categoría</string>
+    <string name="descripcion">Descripción</string>
+    <string name="hint_descripcion">Describe qué enseñas, tu metodología y experiencia…</string>
+    <string name="precio_hora">Precio por hora ($)</string>
+    <string name="hint_precio">10</string>
+    <string name="modalidad">Modalidad</string>
+    <string name="btn_agregar_habilidad">Agregar Nueva Habilidad</string>
+
+    <!-- EditarHabilidad -->
+    <string name="editar_habilidad">Editar Habilidad</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="confirmar_eliminar_titulo">Eliminar Habilidad</string>
+    <string name="confirmar_eliminar_mensaje">¿Estás seguro de que quieres eliminar esta habilidad?</string>
+    <string name="estadisticas">Estadísticas:</string>
+    <string name="sesiones_completadas">• %1$d sesiones completadas</string>
+    <string name="rating_con_reviews">★ %1$.1f (%2$d reseñas)</string>
+    <string name="rating_sin_reviews">★ Sin reseñas</string>
+    <string name="btn_guardar_cambios">Guardar Cambios</string>
+
+    <!-- Validaciones -->
+    <string name="error_titulo_vacio">Por favor ingresa un título</string>
+    <string name="error_descripcion_vacia">Por favor ingresa una descripción</string>
+    <string name="error_precio_vacio">Por favor ingresa un precio</string>
+    <string name="error_modalidad_no_seleccionada">Por favor selecciona una modalidad</string>
+    <string name="error_skill_id_invalido">Error: ID de habilidad no válido</string>
+
+    <!-- Mensajes de éxito y error -->
+    <string name="habilidad_creada_exito">¡Habilidad creada exitosamente!</string>
+    <string name="error_crear_habilidad">Error al crear habilidad: %1$s</string>
+    <string name="habilidad_eliminada">Habilidad eliminada correctamente</string>
+    <string name="error_eliminar_habilidad">Error al eliminar: %1$s</string>
+    <string name="cambios_guardados">¡Cambios guardados exitosamente!</string>
+    <string name="error_actualizar_habilidad">Error al actualizar: %1$s</string>
+    <string name="error_usuario_no_identificado">Error: No se pudo identificar al usuario</string>
 </resources>

@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/accent_color">    <!-- Header -->
+    android:background="@color/accent_color">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
         android:paddingTop="40dp"
-        android:gravity="center_vertical"><ImageView
+        android:gravity="center_vertical">
+        <ImageView
             android:id="@+id/btn_back"
             android:layout_width="24dp"
             android:layout_height="24dp"
@@ -22,7 +23,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nueva Habilidad"
+            android:text="@string/nueva_habilidad"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -47,15 +48,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Título de la habilidad"
+                android:text="@string/titulo_habilidad"
                 android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />            <EditText
+                android:layout_marginBottom="8dp" />
+            <EditText
                 android:id="@+id/et_titulo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="ej. Matemáticas para bachillerato"
+                android:hint="@string/hint_titulo"
                 android:padding="16dp"
                 android:background="@drawable/rounded_edittext"
                 android:textColorHint="@color/text_hint"
@@ -66,7 +68,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Categoría"
+                android:text="@string/categoria"
                 android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -84,15 +86,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Descripción"
+                android:text="@string/descripcion"
                 android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />            <EditText
+                android:layout_marginBottom="8dp" />
+            <EditText
                 android:id="@+id/et_descripcion"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:hint="Describe qué enseñas, tu metodología y experiencia..."
+                android:hint="@string/hint_descripcion"
                 android:padding="16dp"
                 android:background="@drawable/rounded_edittext"
                 android:textColorHint="@color/text_hint"
@@ -105,15 +108,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Precio por hora ($)"
+                android:text="@string/precio_hora"
                 android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp" />            <EditText
+                android:layout_marginBottom="8dp" />
+            <EditText
                 android:id="@+id/et_precio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="10"
+                android:hint="@string/hint_precio"
                 android:padding="16dp"
                 android:background="@drawable/rounded_edittext"
                 android:textColorHint="@color/text_hint"
@@ -125,7 +129,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Modalidad"
+                android:text="@string/modalidad"
                 android:textColor="#374151"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -137,11 +141,12 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:background="@drawable/rounded_spinner"
-                android:layout_marginBottom="32dp" />            <!-- Botón -->
+                android:layout_marginBottom="32dp" />
             <Button
                 android:id="@+id/btn_agregar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"                android:text="Agregar Nueva Habilidad"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_agregar_habilidad"
                 android:textColor="@android:color/white"
                 android:backgroundTint="@color/accent_color"
                 android:padding="16dp"

@@ -15,12 +15,13 @@ data class Skill(
     var userAvatar: String = "",
     var rating: Double = 0.0,
     var reviewCount: Int = 0,
+    var sesionesCompletadas: Int = 0, // Nuevo campo para sesiones completadas
     var active: Boolean = true,
     var createdAt: Long = System.currentTimeMillis(),
     var updatedAt: Long = System.currentTimeMillis()
 ) {
     // No-argument constructor required by Firestore
-    constructor() : this("", "", "", "", 0.0, "", "", "", "", 0.0, 0, true, 0L, 0L)
+    constructor() : this("", "", "", "", 0.0, "", "", "", "", 0.0, 0, 0, true, 0L, 0L)
 
     /**
      * Get formatted price string

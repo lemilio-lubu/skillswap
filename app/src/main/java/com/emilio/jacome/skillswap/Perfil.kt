@@ -213,6 +213,10 @@ class Perfil : AppCompatActivity() {
         intent.putExtra("skill_description", skill.description)
         intent.putExtra("skill_category", skill.category)
         intent.putExtra("skill_price", skill.price.toString())
+        intent.putExtra("skill_modalidad", skill.modalidad)
+        intent.putExtra("skill_rating", skill.rating)
+        intent.putExtra("skill_review_count", skill.reviewCount)
+        intent.putExtra("skill_sesiones_completadas", skill.sesionesCompletadas)
         startActivity(intent)
     }
     
