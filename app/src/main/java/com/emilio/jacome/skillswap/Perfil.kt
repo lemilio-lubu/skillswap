@@ -75,6 +75,7 @@ class Perfil : AppCompatActivity() {
     
     private fun loadUserData() {
         val userId = FirebaseManager.getCurrentUserId()
+        
         if (userId == null) {
             showError("Error: Usuario no autenticado")
             return
@@ -110,6 +111,7 @@ class Perfil : AppCompatActivity() {
         SkillRepository.getUserSkills(userId)
             .addOnSuccessListener { querySnapshot ->
                 userSkills = querySnapshot.toObjects(Skill::class.java)
+                    .sortedByDescending { it.createdAt }
                 updateSkillsUI(userSkills)
                 showLoadingState(false)
             }
@@ -130,22 +132,30 @@ class Perfil : AppCompatActivity() {
         // Update university
         universidad.text = if (user.university.isNotEmpty()) user.university else "Universidad no especificada"
         
-        // Update rating
-        val ratingText = UIHelper.formatRating(user.rating, userSkills.sumOf { it.reviewCount })
+        // Update rating (will be calculated from actual skills and reviews later)
+        val totalReviews = userSkills.sumOf { it.reviewCount }
+        val averageRating = if (totalReviews > 0) {
+            userSkills.sumOf { it.rating * it.reviewCount } / totalReviews
+        } else {
+            0.0
+        }
+        val ratingText = UIHelper.formatRating(averageRating, totalReviews)
         calificacion.text = ratingText
     }
     
     private fun updateSkillsUI(skills: List<Skill>) {
-        // Remove existing skill cards (keep static ones for now)
-        // In a real implementation, you'd dynamically create skill cards
-        // For now, update the existing JavaScript and Design cards if they exist
-        
         val cardJavascript = findViewById<LinearLayout>(R.id.card_javascript)
         val cardDiseno = findViewById<LinearLayout>(R.id.card_diseno)
         
         // Hide cards initially
         cardJavascript?.visibility = View.GONE
         cardDiseno?.visibility = View.GONE
+        
+        // If no skills, show the "add first skill" state
+        if (skills.isEmpty()) {
+            btnAgregarHabilidad.text = "Agregar mi primera habilidad"
+            return
+        }
         
         // Show cards based on user's actual skills
         skills.forEachIndexed { index, skill ->

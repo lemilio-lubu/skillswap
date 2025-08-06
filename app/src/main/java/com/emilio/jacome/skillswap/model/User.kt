@@ -8,15 +8,14 @@ data class User(
     var email: String = "",
     var name: String = "",
     var bio: String = "",
-    var skills: List<String> = emptyList(),
+    var university: String = "",
     var rating: Double = 0.0,
     var profileImageUrl: String = "",
-    var university: String = "", // Add university field
     var createdAt: Long = System.currentTimeMillis(),
     var updatedAt: Long = System.currentTimeMillis()
 ) {
     // No-argument constructor required by Firestore
-    constructor() : this("", "", "", "", emptyList(), 0.0, "", "", 0L, 0L)
+    constructor() : this("", "", "", "", "", 0.0, "", 0L, 0L)
     
     /**
      * Validate user data

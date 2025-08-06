@@ -43,8 +43,7 @@ object SkillRepository {
         return FirebaseManager.firestore
             .collection(SKILLS_COLLECTION)
             .whereEqualTo("userId", userId)
-            .whereEqualTo("isActive", true)
-            .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .whereEqualTo("active", true)
             .get()
     }
     
@@ -54,8 +53,7 @@ object SkillRepository {
     fun getAllActiveSkills(): Task<QuerySnapshot> {
         return FirebaseManager.firestore
             .collection(SKILLS_COLLECTION)
-            .whereEqualTo("isActive", true)
-            .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .whereEqualTo("active", true)
             .get()
     }
     
@@ -66,7 +64,7 @@ object SkillRepository {
         return FirebaseManager.firestore
             .collection(SKILLS_COLLECTION)
             .whereEqualTo("category", category)
-            .whereEqualTo("isActive", true)
+            .whereEqualTo("active", true)
             .orderBy("rating", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .get()
     }
@@ -88,7 +86,7 @@ object SkillRepository {
      * Delete skill (set as inactive)
      */
     fun deleteSkill(skillId: String): Task<Void> {
-        return updateSkill(skillId, mapOf("isActive" to false))
+        return updateSkill(skillId, mapOf("active" to false))
     }
     
     /**
@@ -97,7 +95,7 @@ object SkillRepository {
     fun searchSkills(query: String): Task<QuerySnapshot> {
         return FirebaseManager.firestore
             .collection(SKILLS_COLLECTION)
-            .whereEqualTo("isActive", true)
+            .whereEqualTo("active", true)
             .orderBy("title")
             .startAt(query)
             .endAt(query + "\uf8ff")

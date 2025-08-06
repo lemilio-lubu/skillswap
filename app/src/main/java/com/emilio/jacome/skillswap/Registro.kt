@@ -8,9 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import com.emilio.jacome.skillswap.model.Skill
 import com.emilio.jacome.skillswap.model.User
-import com.emilio.jacome.skillswap.utils.SkillRepository
 
 class Registro : AppCompatActivity() {
     
@@ -155,46 +153,48 @@ class Registro : AppCompatActivity() {
             email = email,
             name = nombre,
             bio = "Estudiante en $universidad",
-            university = universidad, // Add university field
-            skills = emptyList(),
+            university = universidad,
             rating = 0.0,
             profileImageUrl = "",
             createdAt = System.currentTimeMillis(),
             updatedAt = System.currentTimeMillis()
         )
         
+        // Verify user data is valid before saving
+        if (!user.isValid()) {
+            showError("Error: Datos de usuario inválidos")
+            resetButton()
+            return
+        }
+        
+        // Try to create the document
         FirebaseManager.firestore.collection("users")
             .document(uid)
             .set(user)
             .addOnSuccessListener {
-                // User document created successfully
-                // Create a sample skill for new users
-                createSampleSkill(uid, nombre, universidad)
-                showSuccess("¡Cuenta creada exitosamente!")
+                // Document created successfully
+                showSuccess("¡Perfil creado exitosamente!")
                 navigateToMainApp()
             }
             .addOnFailureListener { exception ->
-                showError("Error al crear perfil: ${exception.message}")
-                resetButton()
+                // Detailed error handling
+                val errorMsg = when {
+                    exception.message?.contains("PERMISSION_DENIED") == true -> 
+                        "Error de permisos en Firestore. Verifica las reglas de seguridad."
+                    exception.message?.contains("UNAVAILABLE") == true -> 
+                        "Firestore no disponible. Verifica tu conexión a internet."
+                    exception.message?.contains("UNAUTHENTICATED") == true -> 
+                        "Usuario no autenticado. Reintenta el registro."
+                    else -> "Error al crear perfil: ${exception.message}"
+                }
+                showError(errorMsg)
+                
+                // Delete the Firebase Auth user if document creation fails
+                FirebaseManager.auth.currentUser?.delete()
+                    ?.addOnCompleteListener {
+                        resetButton()
+                    }
             }
-    }
-    
-    private fun createSampleSkill(userId: String, userName: String, universidad: String) {
-        val sampleSkill = Skill(
-            title = "Tutoría Académica",
-            description = "Ayudo con materias de $universidad. Disponible para resolver dudas y dar apoyo académico.",
-            category = "Educación",
-            price = 5.0,
-            userId = userId,
-            userName = userName,
-            userAvatar = "",
-            rating = 0.0,
-            reviewCount = 0,
-            isActive = true
-        )
-        
-        // Create the skill asynchronously (don't wait for it)
-        SkillRepository.createSkill(sampleSkill)
     }
     
     private fun handleRegistrationError(exception: Exception?) {

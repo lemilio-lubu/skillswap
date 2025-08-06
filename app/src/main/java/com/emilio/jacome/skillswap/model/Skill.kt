@@ -14,7 +14,7 @@ data class Skill(
     var userAvatar: String = "",
     var rating: Double = 0.0,
     var reviewCount: Int = 0,
-    var isActive: Boolean = true,
+    var active: Boolean = true,
     var createdAt: Long = System.currentTimeMillis(),
     var updatedAt: Long = System.currentTimeMillis()
 ) {
