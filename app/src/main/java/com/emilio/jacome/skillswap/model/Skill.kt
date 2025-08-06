@@ -9,6 +9,7 @@ data class Skill(
     var description: String = "",
     var category: String = "",
     var price: Double = 0.0,
+    var modalidad: String = "", // Nuevo campo para modalidad
     var userId: String = "",
     var userName: String = "",
     var userAvatar: String = "",
@@ -19,8 +20,8 @@ data class Skill(
     var updatedAt: Long = System.currentTimeMillis()
 ) {
     // No-argument constructor required by Firestore
-    constructor() : this("", "", "", "", 0.0, "", "", "", 0.0, 0, true, 0L, 0L)
-    
+    constructor() : this("", "", "", "", 0.0, "", "", "", "", 0.0, 0, true, 0L, 0L)
+
     /**
      * Get formatted price string
      */
