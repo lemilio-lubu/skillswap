@@ -10,9 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import com.emilio.jacome.skillswap.utils.Constants
 import com.emilio.jacome.skillswap.utils.SkillRepository
-import com.emilio.jacome.skillswap.utils.UserRepository
 import com.emilio.jacome.skillswap.model.Skill
-import com.emilio.jacome.skillswap.model.User
 import com.google.firebase.firestore.QuerySnapshot
 
 class Busqueda : AppCompatActivity() {
@@ -41,7 +39,6 @@ class Busqueda : AppCompatActivity() {
     // Data
     private var allSkills = mutableListOf<Skill>()
     private var filteredSkills = mutableListOf<Skill>()
-    private var allUsers = mutableListOf<User>()
     private var selectedCategory = "Todas"
     private var selectedPriceRange = "Todos los precios"
     private var selectedModality = "Todas las modalidades"
@@ -55,7 +52,7 @@ class Busqueda : AppCompatActivity() {
         setupCategoryFilters()
         setupAdvancedFilters()
         setupNavigationButtons()
-        loadUsersAndSkills()
+        loadSkills()
     }
 
     private fun initViews() {
@@ -211,44 +208,19 @@ class Busqueda : AppCompatActivity() {
     private fun performFirebaseSearch(query: String) {
         progressBar.visibility = View.VISIBLE
         
-        // Realizar búsqueda en paralelo tanto en skills como en usuarios
-        val skillSearchTask = SkillRepository.searchSkills(query)
-        val userSearchTask = UserRepository.searchUsersByName(query)
-        
-        // Combinar resultados de ambas búsquedas
-        skillSearchTask.addOnCompleteListener { skillTask ->
-            userSearchTask.addOnCompleteListener { userTask ->
+        SkillRepository.searchSkills(query)
+            .addOnSuccessListener { querySnapshot ->
                 progressBar.visibility = View.GONE
-                
                 val searchResults = mutableListOf<Skill>()
                 
-                // Agregar skills encontrados directamente
-                if (skillTask.isSuccessful) {
-                    for (document in skillTask.result.documents) {
-                        val skill = document.toObject(Skill::class.java)
-                        skill?.let { searchResults.add(it) }
-                    }
+                for (document in querySnapshot.documents) {
+                    val skill = document.toObject(Skill::class.java)
+                    skill?.let { searchResults.add(it) }
                 }
                 
-                // Agregar skills de usuarios encontrados
-                if (userTask.isSuccessful) {
-                    val foundUserIds = mutableSetOf<String>()
-                    for (document in userTask.result.documents) {
-                        val user = document.toObject(User::class.java)
-                        user?.let { foundUserIds.add(it.uid) }
-                    }
-                    
-                    // Buscar skills de estos usuarios
-                    searchResults.addAll(allSkills.filter { skill ->
-                        foundUserIds.contains(skill.userId)
-                    })
-                }
-                
-                // Aplicar filtros adicionales y eliminar duplicados
+                // Combinar resultados de Firebase con filtros locales
                 filteredSkills.clear()
-                val uniqueSkills = searchResults.distinctBy { it.id }
-                
-                filteredSkills.addAll(uniqueSkills.filter { skill ->
+                filteredSkills.addAll(searchResults.filter { skill ->
                     val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
                     val matchesPrice = matchesPriceRange(skill.price)
                     val matchesModality = selectedModality == "Todas las modalidades" || skill.modalidad == selectedModality
@@ -258,37 +230,22 @@ class Busqueda : AppCompatActivity() {
                 
                 updateSkillsDisplay()
             }
-        }
-        
-        // Manejo de errores
-        skillSearchTask.addOnFailureListener {
-            userSearchTask.addOnFailureListener {
+            .addOnFailureListener {
                 progressBar.visibility = View.GONE
                 // En caso de error, usar búsqueda local
                 performLocalSearch(normalizeText(query))
             }
-        }
     }
 
     private fun performLocalSearch(normalizedQuery: String) {
         filteredSkills.clear()
 
         filteredSkills.addAll(allSkills.filter { skill ->
-            // Buscar en título, descripción, categoría de la skill
-            val matchesSkillData = normalizeText(skill.title).contains(normalizedQuery) ||
+            val matchesQuery = normalizeText(skill.title).contains(normalizedQuery) ||
                     normalizeText(skill.description).contains(normalizedQuery) ||
-                    normalizeText(skill.category).contains(normalizedQuery)
-            
-            // Buscar en datos del usuario
-            val matchesUserData = normalizeText(skill.userName).contains(normalizedQuery) ||
-                    // Buscar en datos adicionales del usuario si están disponibles
-                    allUsers.find { it.uid == skill.userId }?.let { user ->
-                        normalizeText(user.name).contains(normalizedQuery) ||
-                        normalizeText(user.university).contains(normalizedQuery) ||
-                        normalizeText(user.bio).contains(normalizedQuery)
-                    } ?: false
+                    normalizeText(skill.category).contains(normalizedQuery) ||
+                    normalizeText(skill.userName).contains(normalizedQuery)
 
-            val matchesQuery = matchesSkillData || matchesUserData
             val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
             val matchesPrice = matchesPriceRange(skill.price)
             val matchesModality = selectedModality == "Todas las modalidades" || skill.modalidad == selectedModality
@@ -303,43 +260,8 @@ class Busqueda : AppCompatActivity() {
         if (etBuscar.text.toString().trim().isNotEmpty()) {
             filterSkills(etBuscar.text.toString().trim())
         } else {
-            // Si no hay texto de búsqueda, usar filtro de categoría de Firebase
-            if (selectedCategory != "Todas") {
-                loadSkillsByCategory(selectedCategory)
-            } else {
-                applyAllFilters()
-            }
+            applyAllFilters()
         }
-    }
-
-    private fun loadSkillsByCategory(category: String) {
-        progressBar.visibility = View.VISIBLE
-        
-        SkillRepository.getSkillsByCategory(category)
-            .addOnSuccessListener { querySnapshot ->
-                progressBar.visibility = View.GONE
-                filteredSkills.clear()
-                
-                for (document in querySnapshot.documents) {
-                    val skill = document.toObject(Skill::class.java)
-                    skill?.let { 
-                        // Aplicar filtros adicionales
-                        val matchesPrice = matchesPriceRange(it.price)
-                        val matchesModality = selectedModality == "Todas las modalidades" || it.modalidad == selectedModality
-                        
-                        if (matchesPrice && matchesModality) {
-                            filteredSkills.add(it)
-                        }
-                    }
-                }
-                
-                updateSkillsDisplay()
-            }
-            .addOnFailureListener {
-                progressBar.visibility = View.GONE
-                // En caso de error, usar filtro local
-                applyAllFilters()
-            }
     }
 
     private fun applyAllFilters() {
@@ -410,21 +332,10 @@ class Busqueda : AppCompatActivity() {
             }
         }
 
-        // Sugerencias basadas en usuarios registrados
-        allUsers.forEach { user ->
-            if (normalizeText(user.name).contains(normalizedQuery)) {
-                sugerencias.add(user.name)
-            }
-            if (normalizeText(user.university).contains(normalizedQuery)) {
-                sugerencias.add(user.university)
-            }
-        }
-
         // Sugerencias comunes
         val commonSuggestions = listOf(
             "programación", "python", "java", "matemáticas", "álgebra", "cálculo",
-            "inglés", "español", "francés", "guitarra", "piano", "dibujo",
-            "Universidad Nacional", "UNAM", "Universidad Tecnológica"
+            "inglés", "español", "francés", "guitarra", "piano", "dibujo"
         )
 
         commonSuggestions.forEach { suggestion ->
@@ -442,101 +353,34 @@ class Busqueda : AppCompatActivity() {
             .replace("ó", "o").replace("ú", "u").replace("ñ", "n")
     }
 
-    private fun loadUsersAndSkills() {
+    private fun loadSkills() {
         progressBar.visibility = View.VISIBLE
 
-        // Cargar usuarios y skills en paralelo
-        val skillsTask = SkillRepository.getAllActiveSkills()
-        val usersTask = UserRepository.getAllUsers()
-
-        skillsTask.addOnCompleteListener { skillTaskResult ->
-            usersTask.addOnCompleteListener { userTaskResult ->
+        // Cargar skills desde Firebase
+        SkillRepository.getAllActiveSkills()
+            .addOnSuccessListener { querySnapshot ->
                 progressBar.visibility = View.GONE
-                
-                // Procesar skills
                 allSkills.clear()
-                if (skillTaskResult.isSuccessful) {
-                    for (document in skillTaskResult.result.documents) {
-                        val skill = document.toObject(Skill::class.java)
-                        skill?.let { allSkills.add(it) }
-                    }
-                }
                 
-                // Procesar usuarios
-                allUsers.clear()
-                if (userTaskResult.isSuccessful) {
-                    for (document in userTaskResult.result.documents) {
-                        val user = document.toObject(User::class.java)
-                        user?.let { allUsers.add(it) }
-                    }
+                for (document in querySnapshot.documents) {
+                    val skill = document.toObject(Skill::class.java)
+                    skill?.let { allSkills.add(it) }
                 }
-
-                // Enriquecer skills con información de usuarios
-                enrichSkillsWithUserData()
 
                 // Configurar clicks de las cards originales
                 setupOriginalCards()
 
                 applyAllFilters()
             }
-        }
-        
-        // Manejo de errores
-        skillsTask.addOnFailureListener {
-            usersTask.addOnFailureListener {
+            .addOnFailureListener { exception ->
                 progressBar.visibility = View.GONE
-                // En caso de error, usar datos de ejemplo
+                // En caso de error, mostrar mensaje o usar datos de ejemplo
                 loadFallbackData()
             }
-        }
-    }
-
-    private fun enrichSkillsWithUserData() {
-        // Enriquecer información de skills con datos de usuarios
-        allSkills.forEach { skill ->
-            val user = allUsers.find { it.uid == skill.userId }
-            user?.let {
-                // Si el skill no tiene userName o está vacío, usar el del usuario
-                if (skill.userName.isEmpty()) {
-                    skill.userName = it.getDisplayName()
-                }
-                // Si el skill no tiene userAvatar, usar información del usuario
-                if (skill.userAvatar.isEmpty()) {
-                    skill.userAvatar = if (it.profileImageUrl.isNotEmpty()) 
-                        it.profileImageUrl 
-                    else 
-                        it.name.split(" ").map { name -> name.first() }.joinToString("")
-                }
-            }
-        }
     }
 
     private fun loadFallbackData() {
         // Datos de ejemplo como fallback en caso de error con Firebase
-        val exampleUsers = listOf(
-            User(
-                uid = "user1",
-                name = "María García",
-                email = "maria@university.edu",
-                university = "Universidad Nacional",
-                bio = "Estudiante de Matemáticas con experiencia en tutoría"
-            ),
-            User(
-                uid = "user2", 
-                name = "Carlos López",
-                email = "carlos@tech.edu",
-                university = "Instituto Tecnológico",
-                bio = "Desarrollador de software especializado en Python"
-            ),
-            User(
-                uid = "user3",
-                name = "Ana Ruiz", 
-                email = "ana@languages.edu",
-                university = "Universidad de Idiomas",
-                bio = "Profesora de inglés certificada"
-            )
-        )
-        
         val exampleSkills = listOf(
             Skill(
                 id = "1",
@@ -570,12 +414,8 @@ class Busqueda : AppCompatActivity() {
             )
         )
 
-        allUsers.clear()
-        allUsers.addAll(exampleUsers)
         allSkills.clear()
         allSkills.addAll(exampleSkills)
-        
-        enrichSkillsWithUserData()
         setupOriginalCards()
         applyAllFilters()
     }
@@ -594,7 +434,6 @@ class Busqueda : AppCompatActivity() {
 
             cardMatematicas?.setOnClickListener {
                 val skill = matematicasSkill
-                val user = skill?.let { allUsers.find { user -> user.uid == it.userId } }
                 val intent = Intent(this, DetalleHabilidad::class.java)
                 intent.putExtra("skill_title", skill?.title ?: "Matemáticas básicas")
                 intent.putExtra("skill_description", skill?.description ?: "Ayudo con álgebra, geometría y cálculo básico")
@@ -606,16 +445,11 @@ class Busqueda : AppCompatActivity() {
                 intent.putExtra("skill_rating", skill?.rating?.toString() ?: "0.0")
                 intent.putExtra("skill_review_count", skill?.reviewCount?.toString() ?: "0")
                 intent.putExtra("skill_id", skill?.id ?: "")
-                intent.putExtra("instructor_user_id", skill?.userId ?: "")
-                intent.putExtra("instructor_university", user?.university ?: "")
-                intent.putExtra("instructor_bio", user?.bio ?: "")
-                intent.putExtra("instructor_email", user?.email ?: "")
                 startActivity(intent)
             }
 
             cardPython?.setOnClickListener {
                 val skill = pythonSkill
-                val user = skill?.let { allUsers.find { user -> user.uid == it.userId } }
                 val intent = Intent(this, DetalleHabilidad::class.java)
                 intent.putExtra("skill_title", skill?.title ?: "Python para principiantes")
                 intent.putExtra("skill_description", skill?.description ?: "Enseño fundamentos de Python desde cero")
@@ -627,16 +461,11 @@ class Busqueda : AppCompatActivity() {
                 intent.putExtra("skill_rating", skill?.rating?.toString() ?: "0.0")
                 intent.putExtra("skill_review_count", skill?.reviewCount?.toString() ?: "0")
                 intent.putExtra("skill_id", skill?.id ?: "")
-                intent.putExtra("instructor_user_id", skill?.userId ?: "")
-                intent.putExtra("instructor_university", user?.university ?: "")
-                intent.putExtra("instructor_bio", user?.bio ?: "")
-                intent.putExtra("instructor_email", user?.email ?: "")
                 startActivity(intent)
             }
 
             cardIngles?.setOnClickListener {
                 val skill = inglesSkill
-                val user = skill?.let { allUsers.find { user -> user.uid == it.userId } }
                 val intent = Intent(this, DetalleHabilidad::class.java)
                 intent.putExtra("skill_title", skill?.title ?: "Inglés conversacional")
                 intent.putExtra("skill_description", skill?.description ?: "Práctica de conversación en inglés")
@@ -648,10 +477,6 @@ class Busqueda : AppCompatActivity() {
                 intent.putExtra("skill_rating", skill?.rating?.toString() ?: "0.0")
                 intent.putExtra("skill_review_count", skill?.reviewCount?.toString() ?: "0")
                 intent.putExtra("skill_id", skill?.id ?: "")
-                intent.putExtra("instructor_user_id", skill?.userId ?: "")
-                intent.putExtra("instructor_university", user?.university ?: "")
-                intent.putExtra("instructor_bio", user?.bio ?: "")
-                intent.putExtra("instructor_email", user?.email ?: "")
                 startActivity(intent)
             }
         } catch (e: Exception) {
@@ -778,33 +603,16 @@ class Busqueda : AppCompatActivity() {
             )
         }
 
-        val instructorInfoLayout = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
+        val instructorView = TextView(this).apply {
+            text = "Por ${skill.userName}"
+            setTextColor(getColor(android.R.color.darker_gray))
+            textSize = 12f
             layoutParams = LinearLayout.LayoutParams(
                 0,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 1f
             )
         }
-
-        val instructorView = TextView(this).apply {
-            text = "Por ${skill.userName}"
-            setTextColor(getColor(android.R.color.darker_gray))
-            textSize = 12f
-            setTypeface(null, android.graphics.Typeface.BOLD)
-        }
-
-        // Mostrar universidad del instructor si está disponible
-        val user = allUsers.find { it.uid == skill.userId }
-        val universityView = TextView(this).apply {
-            text = user?.university ?: ""
-            setTextColor(getColor(android.R.color.darker_gray))
-            textSize = 10f
-            visibility = if (user?.university?.isNotEmpty() == true) View.VISIBLE else View.GONE
-        }
-
-        instructorInfoLayout.addView(instructorView)
-        instructorInfoLayout.addView(universityView)
 
         val priceView = TextView(this).apply {
             text = skill.getFormattedPrice()
@@ -813,7 +621,7 @@ class Busqueda : AppCompatActivity() {
             setTypeface(null, android.graphics.Typeface.BOLD)
         }
 
-        bottomLayout.addView(instructorInfoLayout)
+        bottomLayout.addView(instructorView)
         bottomLayout.addView(priceView)
 
         cardLayout.addView(titleView)
@@ -822,7 +630,6 @@ class Busqueda : AppCompatActivity() {
 
         // Click listener para navegar al detalle
         cardLayout.setOnClickListener {
-            val user = allUsers.find { it.uid == skill.userId }
             val intent = Intent(this, DetalleHabilidad::class.java)
             intent.putExtra("skill_title", skill.title)
             intent.putExtra("skill_description", skill.description)
@@ -834,10 +641,6 @@ class Busqueda : AppCompatActivity() {
             intent.putExtra("skill_rating", skill.rating.toString())
             intent.putExtra("skill_review_count", skill.reviewCount.toString())
             intent.putExtra("skill_id", skill.id)
-            intent.putExtra("instructor_user_id", skill.userId)
-            intent.putExtra("instructor_university", user?.university ?: "")
-            intent.putExtra("instructor_bio", user?.bio ?: "")
-            intent.putExtra("instructor_email", user?.email ?: "")
             startActivity(intent)
         }
 
