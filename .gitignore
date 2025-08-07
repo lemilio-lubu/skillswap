@@ -101,6 +101,5 @@ firestore-debug.log
 *.swo
 *~
 local.properties
-gradle.properties
 .idea/.name
 .idea/deviceManager.xml
