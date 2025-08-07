@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    tools:context=".Perfil">    <!-- Header con título y botones -->    <LinearLayout
+    android:orientation="vertical"
+    android:background="@color/accent_color"
+    tools:context=".Perfil">
+
+    <!-- Header con título y botones -->
+    <LinearLayout
         android:id="@+id/header_layout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/accent_color"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="16dp"
-        android:paddingTop="40dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:paddingTop="40dp">
 
         <ImageView
             android:id="@+id/btn_back"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:clickable="true"
             android:contentDescription="Volver"
             android:focusable="true"
             android:src="@drawable/ic_back_arrow"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="4dp"
-            android:layout_marginEnd="12dp" />
+            android:layout_marginEnd="16dp" />
 
         <TextView
             android:id="@+id/tv_titulo"
@@ -44,32 +42,29 @@
 
         <ImageView
             android:id="@+id/btn_configuracion"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:clickable="true"
             android:contentDescription="Cerrar sesión"
             android:focusable="true"
             android:src="@drawable/ic_logout"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="4dp" />
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
 
     </LinearLayout>
 
     <!-- Contenedor principal -->
     <ScrollView
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="1"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/header_layout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:background="@drawable/rounded_top_background"
+        android:backgroundTint="@android:color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@android:color/white"
             android:padding="24dp">
 
             <!-- Avatar y información del usuario -->
@@ -283,4 +278,4 @@
 
     </ScrollView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
