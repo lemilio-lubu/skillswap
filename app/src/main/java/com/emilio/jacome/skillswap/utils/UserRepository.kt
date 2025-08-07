@@ -4,6 +4,7 @@ import com.emilio.jacome.skillswap.FirebaseManager
 import com.emilio.jacome.skillswap.model.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 
 /**
  * UserRepository - Handles user data operations with Firestore
@@ -80,5 +81,36 @@ object UserRepository {
             .addOnFailureListener {
                 callback(null)
             }
+    }
+    
+    /**
+     * Get all users (for search functionality)
+     */
+    fun getAllUsers(): Task<QuerySnapshot> {
+        return FirebaseManager.firestore
+            .collection(USERS_COLLECTION)
+            .get()
+    }
+    
+    /**
+     * Search users by name
+     */
+    fun searchUsersByName(query: String): Task<QuerySnapshot> {
+        return FirebaseManager.firestore
+            .collection(USERS_COLLECTION)
+            .orderBy("name")
+            .startAt(query)
+            .endAt(query + "\uf8ff")
+            .get()
+    }
+    
+    /**
+     * Search users by university
+     */
+    fun searchUsersByUniversity(university: String): Task<QuerySnapshot> {
+        return FirebaseManager.firestore
+            .collection(USERS_COLLECTION)
+            .whereEqualTo("university", university)
+            .get()
     }
 }
