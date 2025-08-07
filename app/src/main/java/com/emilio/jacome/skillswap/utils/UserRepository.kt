@@ -84,7 +84,7 @@ object UserRepository {
     }
     
     /**
-     * Get all users (for search functionality)
+     * Get all users (for search functionality) - filtering on client side
      */
     fun getAllUsers(): Task<QuerySnapshot> {
         return FirebaseManager.firestore
@@ -93,7 +93,7 @@ object UserRepository {
     }
     
     /**
-     * Search users by name
+     * Search users by name - filtering on client side
      */
     fun searchUsersByName(query: String): Task<QuerySnapshot> {
         return FirebaseManager.firestore

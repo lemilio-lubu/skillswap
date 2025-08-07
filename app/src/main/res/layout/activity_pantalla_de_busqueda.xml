@@ -127,13 +127,13 @@
     <HorizontalScrollView
         android:id="@+id/filtros_scroll"
         android:layout_width="0dp"
-        android:layout_height="64dp"
+        android:layout_height="80dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/white"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
         android:scrollbars="none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -142,7 +142,7 @@
         <LinearLayout
             android:id="@+id/categories_container"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
@@ -162,8 +162,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filtros_scroll"
-        app:layout_constraintBottom_toTopOf="@id/scroll_view_content" />
+        app:layout_constraintTop_toBottomOf="@id/filtros_scroll" />
 
     <!-- ScrollView con contenido de habilidades -->
     <ScrollView
@@ -171,8 +170,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/progress_bar"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/filtros_scroll"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -201,7 +200,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/progress_bar">
+        app:layout_constraintTop_toBottomOf="@id/filtros_scroll">
 
         <TextView
             android:layout_width="wrap_content"

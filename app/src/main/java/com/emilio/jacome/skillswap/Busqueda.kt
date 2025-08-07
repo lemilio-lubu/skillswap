@@ -113,7 +113,7 @@ class Busqueda : AppCompatActivity() {
     private fun createCategoryFilterView(category: String): TextView {
         return TextView(this).apply {
             text = category
-            setPadding(48, 24, 48, 24)
+            setPadding(32, 20, 32, 20)
             textSize = 14f
             gravity = android.view.Gravity.CENTER
             isClickable = true
@@ -124,7 +124,7 @@ class Busqueda : AppCompatActivity() {
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.MATCH_PARENT
             )
-            params.setMargins(0, 0, 24, 0)
+            params.setMargins(0, 0, 16, 0)
             layoutParams = params
             
             setOnClickListener {
@@ -154,136 +154,87 @@ class Busqueda : AppCompatActivity() {
     private fun filterSkills(query: String) {
         val normalizedQuery = normalizeText(query)
         
-        // Si la consulta es específica, usar búsqueda de Firebase
-        if (query.length >= 3) {
-            performFirebaseSearch(query)
+        if (normalizedQuery.length >= 2) {
+            performSmartSearch(normalizedQuery)
         } else {
-            // Para consultas cortas, filtrar localmente
-            performLocalSearch(normalizedQuery)
+            // Para consultas muy cortas, mostrar todas las habilidades con filtro de categoría
+            applyAllFilters()
         }
     }
 
-    private fun performFirebaseSearch(query: String) {
+    private fun performSmartSearch(normalizedQuery: String) {
         progressBar.visibility = View.VISIBLE
-        
-        // Realizar búsqueda en paralelo tanto en skills como en usuarios
-        val skillSearchTask = SkillRepository.searchSkills(query)
-        val userSearchTask = UserRepository.searchUsersByName(query)
-        
-        // Combinar resultados de ambas búsquedas
-        skillSearchTask.addOnCompleteListener { skillTask ->
-            userSearchTask.addOnCompleteListener { userTask ->
-                progressBar.visibility = View.GONE
-                
-                val searchResults = mutableListOf<Skill>()
-                
-                // Agregar skills encontrados directamente
-                if (skillTask.isSuccessful) {
-                    for (document in skillTask.result.documents) {
-                        val skill = document.toObject(Skill::class.java)
-                        skill?.let { searchResults.add(it) }
-                    }
-                }
-                
-                // Agregar skills de usuarios encontrados
-                if (userTask.isSuccessful) {
-                    val foundUserIds = mutableSetOf<String>()
-                    for (document in userTask.result.documents) {
-                        val user = document.toObject(User::class.java)
-                        user?.let { foundUserIds.add(it.uid) }
-                    }
-                    
-                    // Buscar skills de estos usuarios
-                    searchResults.addAll(allSkills.filter { skill ->
-                        foundUserIds.contains(skill.userId)
-                    })
-                }
-                
-                // Aplicar filtros adicionales y eliminar duplicados
-                filteredSkills.clear()
-                val uniqueSkills = searchResults.distinctBy { it.id }
-                
-                filteredSkills.addAll(uniqueSkills.filter { skill ->
-                    val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
-                    matchesCategory
-                })
-                
-                updateSkillsDisplay()
-            }
-        }
-        
-        // Manejo de errores
-        skillSearchTask.addOnFailureListener {
-            userSearchTask.addOnFailureListener {
-                progressBar.visibility = View.GONE
-                // En caso de error, usar búsqueda local
-                performLocalSearch(normalizeText(query))
-            }
-        }
-    }
-
-    private fun performLocalSearch(normalizedQuery: String) {
         filteredSkills.clear()
 
-        filteredSkills.addAll(allSkills.filter { skill ->
-            // Buscar en título, descripción, categoría de la skill
-            val matchesSkillData = normalizeText(skill.title).contains(normalizedQuery) ||
-                    normalizeText(skill.description).contains(normalizedQuery) ||
-                    normalizeText(skill.category).contains(normalizedQuery)
+        // Algoritmo de búsqueda mejorado con scoring
+        val searchResults = mutableMapOf<Skill, Int>()
+
+        allSkills.forEach { skill ->
+            var score = 0
             
-            // Buscar en datos del usuario
-            val matchesUserData = normalizeText(skill.userName).contains(normalizedQuery) ||
-                    // Buscar en datos adicionales del usuario si están disponibles
-                    allUsers.find { it.uid == skill.userId }?.let { user ->
-                        normalizeText(user.name).contains(normalizedQuery) ||
-                        normalizeText(user.university).contains(normalizedQuery) ||
-                        normalizeText(user.bio).contains(normalizedQuery)
-                    } ?: false
+            // Buscar en título (mayor peso)
+            val normalizedTitle = normalizeText(skill.title)
+            when {
+                normalizedTitle == normalizedQuery -> score += 100
+                normalizedTitle.startsWith(normalizedQuery) -> score += 80
+                normalizedTitle.contains(normalizedQuery) -> score += 60
+            }
 
-            val matchesQuery = matchesSkillData || matchesUserData
-            val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
+            // Buscar en descripción (peso medio)
+            val normalizedDescription = normalizeText(skill.description)
+            when {
+                normalizedDescription.contains(normalizedQuery) -> score += 40
+            }
 
-            matchesQuery && matchesCategory
-        })
+            // Buscar en categoría (peso medio)
+            val normalizedCategory = normalizeText(skill.category)
+            when {
+                normalizedCategory == normalizedQuery -> score += 70
+                normalizedCategory.contains(normalizedQuery) -> score += 50
+            }
 
+            // Buscar en nombre del instructor (peso bajo)
+            val normalizedUserName = normalizeText(skill.userName)
+            when {
+                normalizedUserName.contains(normalizedQuery) -> score += 30
+            }
+
+            // Buscar en datos del usuario (peso muy bajo)
+            allUsers.find { it.uid == skill.userId }?.let { user ->
+                val normalizedUserBio = normalizeText(user.bio)
+                val normalizedUniversity = normalizeText(user.university)
+                when {
+                    normalizedUserBio.contains(normalizedQuery) -> score += 20
+                    normalizedUniversity.contains(normalizedQuery) -> score += 25
+                }
+            }
+
+            // Solo incluir resultados con score > 0
+            if (score > 0) {
+                searchResults[skill] = score
+            }
+        }
+
+        // Ordenar por score y aplicar filtro de categoría
+        val sortedResults = searchResults.toList()
+            .sortedByDescending { it.second }
+            .map { it.first }
+            .filter { skill ->
+                selectedCategory == "Todas" || skill.category == selectedCategory
+            }
+
+        filteredSkills.addAll(sortedResults)
+        progressBar.visibility = View.GONE
         updateSkillsDisplay()
     }
 
     private fun filterSkillsByCategory() {
-        if (etBuscar.text.toString().trim().isNotEmpty()) {
-            filterSkills(etBuscar.text.toString().trim())
+        val query = etBuscar.text.toString().trim()
+        if (query.isNotEmpty()) {
+            filterSkills(query)
         } else {
-            // Si no hay texto de búsqueda, usar filtro de categoría de Firebase
-            if (selectedCategory != "Todas") {
-                loadSkillsByCategory(selectedCategory)
-            } else {
-                applyAllFilters()
-            }
+            applyAllFilters()
         }
-    }
-
-    private fun loadSkillsByCategory(category: String) {
-        progressBar.visibility = View.VISIBLE
-        
-        SkillRepository.getSkillsByCategory(category)
-            .addOnSuccessListener { querySnapshot ->
-                progressBar.visibility = View.GONE
-                filteredSkills.clear()
-                
-                for (document in querySnapshot.documents) {
-                    val skill = document.toObject(Skill::class.java)
-                    skill?.let { 
-                        filteredSkills.add(it)
-                    }
-                }
-                
-                updateSkillsDisplay()
-            }
-            .addOnFailureListener {
-                progressBar.visibility = View.GONE
-                // En caso de error, usar filtro local
-                applyAllFilters()
-            }
     }
 
     private fun applyAllFilters() {
@@ -328,43 +279,61 @@ class Busqueda : AppCompatActivity() {
         val sugerencias = mutableSetOf<String>()
         val normalizedQuery = normalizeText(query)
 
-        // Sugerencias basadas en habilidades existentes
-        allSkills.forEach { skill ->
-            if (normalizeText(skill.title).contains(normalizedQuery)) {
-                sugerencias.add(skill.title)
+        // Límite para evitar procesar demasiados elementos
+        var skillProcessed = 0
+        var userProcessed = 0
+        val maxProcessed = 50
+
+        // Sugerencias basadas en habilidades existentes (prioritarias)
+        allSkills.take(maxProcessed).forEach { skill ->
+            val normalizedTitle = normalizeText(skill.title)
+            val normalizedCategory = normalizeText(skill.category)
+            val normalizedUserName = normalizeText(skill.userName)
+            
+            when {
+                normalizedTitle.startsWith(normalizedQuery) -> sugerencias.add(skill.title)
+                normalizedTitle.contains(normalizedQuery) -> sugerencias.add(skill.title)
+                normalizedCategory.startsWith(normalizedQuery) -> sugerencias.add(skill.category)
+                normalizedCategory.contains(normalizedQuery) -> sugerencias.add(skill.category)
+                normalizedUserName.startsWith(normalizedQuery) -> sugerencias.add(skill.userName)
+                normalizedUserName.contains(normalizedQuery) -> sugerencias.add(skill.userName)
             }
-            if (normalizeText(skill.category).contains(normalizedQuery)) {
-                sugerencias.add(skill.category)
-            }
-            if (normalizeText(skill.userName).contains(normalizedQuery)) {
-                sugerencias.add(skill.userName)
-            }
+            skillProcessed++
         }
 
-        // Sugerencias basadas en usuarios registrados
-        allUsers.forEach { user ->
-            if (normalizeText(user.name).contains(normalizedQuery)) {
-                sugerencias.add(user.name)
+        // Sugerencias basadas en usuarios registrados (limitadas)
+        allUsers.take(maxProcessed).forEach { user ->
+            val normalizedName = normalizeText(user.name)
+            val normalizedUniversity = normalizeText(user.university)
+            
+            when {
+                normalizedName.startsWith(normalizedQuery) -> sugerencias.add(user.name)
+                normalizedName.contains(normalizedQuery) -> sugerencias.add(user.name)
+                normalizedUniversity.startsWith(normalizedQuery) && user.university.isNotEmpty() -> sugerencias.add(user.university)
+                normalizedUniversity.contains(normalizedQuery) && user.university.isNotEmpty() -> sugerencias.add(user.university)
             }
-            if (normalizeText(user.university).contains(normalizedQuery)) {
-                sugerencias.add(user.university)
-            }
+            userProcessed++
         }
 
-        // Sugerencias comunes
+        // Sugerencias comunes (solo si coinciden)
         val commonSuggestions = listOf(
-            "programación", "python", "java", "matemáticas", "álgebra", "cálculo",
-            "inglés", "español", "francés", "guitarra", "piano", "dibujo",
-            "Universidad Nacional", "UNAM", "Universidad Tecnológica"
+            "programación", "python", "java", "javascript", "kotlin", "android",
+            "matemáticas", "álgebra", "cálculo", "estadística", "física",
+            "inglés", "español", "francés", "alemán", "italiano",
+            "guitarra", "piano", "violín", "dibujo", "pintura", "fotografía",
+            "diseño", "marketing", "economía", "contabilidad", "administración"
         )
 
         commonSuggestions.forEach { suggestion ->
-            if (normalizeText(suggestion).contains(normalizedQuery)) {
+            val normalizedSuggestion = normalizeText(suggestion)
+            if (normalizedSuggestion.startsWith(normalizedQuery) || normalizedSuggestion.contains(normalizedQuery)) {
                 sugerencias.add(suggestion)
             }
         }
 
-        return sugerencias.toList().sorted()
+        // Retornar ordenado: primero las que empiezan con la query, luego las que contienen
+        return sugerencias.toList()
+            .sortedWith(compareBy({ !normalizeText(it).startsWith(normalizedQuery) }, { it }))
     }
 
     private fun normalizeText(text: String): String {
@@ -375,63 +344,79 @@ class Busqueda : AppCompatActivity() {
 
     private fun loadUsersAndSkills() {
         progressBar.visibility = View.VISIBLE
+        val currentUserId = FirebaseManager.getCurrentUserId()
 
-        // Cargar usuarios y skills en paralelo
-        val skillsTask = SkillRepository.getAllActiveSkills()
-        val usersTask = UserRepository.getAllUsers()
+        // Cargar habilidades activas únicamente (excluyendo las del usuario actual)
+        SkillRepository.getAllActiveSkills()
+            .addOnSuccessListener { skillSnapshot ->
+                // Procesar skills con validación adicional
+                allSkills.clear()
+                for (document in skillSnapshot.documents) {
+                    document.toObject(Skill::class.java)?.let { skill ->
+                        // Doble validación: debe ser activa y no ser del usuario actual
+                        if (skill.active && skill.userId != currentUserId) {
+                            allSkills.add(skill)
+                        }
+                    }
+                }
 
-        skillsTask.addOnCompleteListener { skillTaskResult ->
-            usersTask.addOnCompleteListener { userTaskResult ->
+                // Cargar usuarios solo después de tener las skills
+                loadUsers()
+            }
+            .addOnFailureListener {
+                progressBar.visibility = View.GONE
+                tvResultadosContador.text = "Error al cargar habilidades"
+            }
+    }
+
+    private fun loadUsers() {
+        val currentUserId = FirebaseManager.getCurrentUserId()
+        
+        UserRepository.getAllUsers()
+            .addOnSuccessListener { userSnapshot ->
                 progressBar.visibility = View.GONE
                 
-                // Procesar skills
-                allSkills.clear()
-                if (skillTaskResult.isSuccessful) {
-                    for (document in skillTaskResult.result.documents) {
-                        val skill = document.toObject(Skill::class.java)
-                        skill?.let { allSkills.add(it) }
-                    }
-                }
-                
-                // Procesar usuarios
+                // Procesar usuarios (excluyendo al usuario actual)
                 allUsers.clear()
-                if (userTaskResult.isSuccessful) {
-                    for (document in userTaskResult.result.documents) {
-                        val user = document.toObject(User::class.java)
-                        user?.let { allUsers.add(it) }
+                for (document in userSnapshot.documents) {
+                    document.toObject(User::class.java)?.let { user ->
+                        // Validación adicional: no incluir al usuario actual
+                        if (user.uid != currentUserId) {
+                            allUsers.add(user)
+                        }
                     }
                 }
 
-                // Enriquecer skills con información de usuarios
+                // Enriquecer skills con información de usuarios y mostrar
                 enrichSkillsWithUserData()
-
                 applyAllFilters()
             }
-        }
-        
-        // Manejo de errores
-        skillsTask.addOnFailureListener {
-            usersTask.addOnFailureListener {
+            .addOnFailureListener {
                 progressBar.visibility = View.GONE
+                // Aunque falle la carga de usuarios, mostrar las skills
+                applyAllFilters()
             }
-        }
     }
 
     private fun enrichSkillsWithUserData() {
+        // Crear un mapa para acceso rápido a usuarios
+        val userMap = allUsers.associateBy { it.uid }
+        
         // Enriquecer información de skills con datos de usuarios
         allSkills.forEach { skill ->
-            val user = allUsers.find { it.uid == skill.userId }
-            user?.let {
+            userMap[skill.userId]?.let { user ->
                 // Si el skill no tiene userName o está vacío, usar el del usuario
                 if (skill.userName.isEmpty()) {
-                    skill.userName = it.getDisplayName()
+                    skill.userName = user.name.ifEmpty { "Usuario" }
                 }
-                // Si el skill no tiene userAvatar, usar información del usuario
+                // Si el skill no tiene userAvatar, generar iniciales
                 if (skill.userAvatar.isEmpty()) {
-                    skill.userAvatar = if (it.profileImageUrl.isNotEmpty()) 
-                        it.profileImageUrl 
-                    else 
-                        it.name.split(" ").map { name -> name.first() }.joinToString("")
+                    skill.userAvatar = user.name.split(" ")
+                        .mapNotNull { it.firstOrNull()?.toString() }
+                        .take(2)
+                        .joinToString("")
+                        .uppercase()
+                        .ifEmpty { "U" }
                 }
             }
         }
