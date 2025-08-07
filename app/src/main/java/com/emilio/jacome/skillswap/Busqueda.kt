@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
 import com.emilio.jacome.skillswap.model.Skill
 import com.emilio.jacome.skillswap.utils.Constants
 import com.emilio.jacome.skillswap.utils.SkillRepository
