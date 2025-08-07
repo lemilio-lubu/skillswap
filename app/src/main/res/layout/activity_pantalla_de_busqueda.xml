@@ -6,15 +6,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5"
-    tools:context=".Busqueda">    <!-- Header con título y perfil -->    <LinearLayout
+    tools:context=".Busqueda">
+
+    <!-- Header con título y perfil -->
+    <LinearLayout
         android:id="@+id/header_layout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/accent_color"
+        android:layout_height="56dp"
+        android:background="#5B7CE6"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="16dp"
-        android:paddingTop="40dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -32,59 +35,99 @@
 
         <TextView
             android:id="@+id/btn_perfil"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@android:color/white"
             android:clickable="true"
             android:contentDescription="Perfil"
             android:focusable="true"
             android:gravity="center"
             android:text="👤"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
 
     </LinearLayout>
 
-    <!-- Barra de búsqueda -->
-    <LinearLayout
-        android:id="@+id/search_layout"
+    <!-- Contenedor de búsqueda con sugerencias -->
+    <RelativeLayout
+        android:id="@+id/search_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:background="@android:color/white"
-        android:padding="16dp"
-        android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/header_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/search_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:text="🔍"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:layout_marginEnd="8dp" />        <EditText
-            android:id="@+id/et_buscar"
-            android:layout_width="364dp"
-            android:layout_height="49dp"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:hint="Buscar habilidades..."
-            android:inputType="text"
-            android:textColor="@color/text_primary"
-            android:textColorHint="@color/text_hint"
-            android:textSize="16sp" />
+        <!-- Barra de búsqueda -->
+        <LinearLayout
+            android:id="@+id/search_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@android:color/white"
+            android:padding="16dp"
+            android:gravity="center_vertical">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/search_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:text="🔍"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:layout_marginEnd="8dp" />
 
-    <!-- Filtros de categorías -->
+            <EditText
+                android:id="@+id/et_buscar"
+                android:layout_width="0dp"
+                android:layout_height="49dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:hint="Buscar habilidades, instructores, categorías..."
+                android:inputType="text"
+                android:textColor="#333333"
+                android:textColorHint="#999999"
+                android:textSize="16sp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
 
-    <!-- Lista de habilidades -->
-    <HorizontalScrollView
-        android:id="@+id/filtros_scroll"
+        </LinearLayout>
+
+        <!-- Panel de sugerencias -->
+        <LinearLayout
+            android:id="@+id/layout_sugerencias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/search_layout"
+            android:orientation="vertical"
+            android:background="@android:color/white"
+            android:elevation="4dp"
+            android:visibility="gone">
+            <!-- Las sugerencias se añaden dinámicamente -->
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <!-- Contador de resultados -->
+    <TextView
+        android:id="@+id/tv_resultados_contador"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="12dp"
+        android:text="Cargando habilidades..."
+        android:textColor="#666666"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/search_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Filtros de categorías -->
+    <HorizontalScrollView
+        android:id="@+id/filtros_scroll"
+        android:layout_width="419dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="8dp"
         android:background="@android:color/white"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
@@ -93,7 +136,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_layout">
+        app:layout_constraintTop_toBottomOf="@id/tv_resultados_contador">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -103,21 +146,22 @@
             <TextView
                 android:id="@+id/filtro_todas"
                 android:layout_width="114dp"
-                android:layout_height="match_parent"                android:layout_marginEnd="8dp"
-                android:background="@color/accent_color"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="8dp"
+                android:background="#5B7CE6"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="Todas"
-                android:textColor="@color/black"
+                android:textColor="@android:color/white"
                 android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/filtro_matematicas"
                 android:layout_width="125dp"
-                android:layout_height="106dp"
+                android:layout_height="36dp"
                 android:layout_marginEnd="8dp"
                 android:background="#E0E0E0"
                 android:clickable="true"
@@ -126,13 +170,13 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="Matemáticas"
-                android:textColor="@color/black"
+                android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/filtro_programacion"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="36dp"
                 android:background="#E0E0E0"
                 android:clickable="true"
                 android:focusable="true"
@@ -140,33 +184,116 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:text="Programación"
-                android:textColor="@color/black"
+                android:textColor="@android:color/black"
                 android:textSize="14sp" />
 
         </LinearLayout>
 
     </HorizontalScrollView>
 
+    <!-- Botón para filtros avanzados -->
+    <Button
+        android:id="@+id/btn_filtros_avanzados"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:drawable/btn_default"
+        android:text="Más filtros"
+        android:textColor="#000000"
+        android:textSize="12sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filtros_scroll" />
+
+    <!-- Filtros avanzados (ocultos inicialmente) -->
+    <LinearLayout
+        android:id="@+id/layout_filtros_avanzados"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_filtros_avanzados">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rango de precio"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <Spinner
+            android:id="@+id/spinner_precio"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Modalidad"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <Spinner
+            android:id="@+id/spinner_modalidad_filtro"
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+    </LinearLayout>
+
+    <!-- Indicador de carga -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_filtros_avanzados" />
+
+    <!-- ScrollView con contenido de habilidades -->
     <ScrollView
+        android:id="@+id/scroll_view_content"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/filtros_scroll"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_filtros_avanzados"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
+            android:id="@+id/skills_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">            <!-- Card Matemáticas básicas -->
+            android:padding="16dp">
+
+            <!-- Las cards de habilidades se añaden dinámicamente aquí -->
+            <!-- Mantener las cards originales como ejemplo/fallback -->
+
+            <!-- Card Matemáticas básicas -->
             <LinearLayout
                 android:id="@+id/card_matematicas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/card_background"
+                android:background="@android:color/white"
                 android:padding="16dp"
                 android:layout_marginBottom="12dp"
                 android:clickable="true"
@@ -210,20 +337,23 @@
                     <TextView
                         android:id="@+id/precio_matematicas"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"                        android:text="$5/hora"
-                        android:textColor="@color/accent_color"
+                        android:layout_height="wrap_content"
+                        android:text="$5/hora"
+                        android:textColor="#5B7CE6"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
                 </LinearLayout>
 
-            </LinearLayout>            <!-- Card Python -->
+            </LinearLayout>
+
+            <!-- Card Python -->
             <LinearLayout
                 android:id="@+id/card_python"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/card_background"
+                android:background="@android:color/white"
                 android:padding="16dp"
                 android:layout_marginBottom="12dp"
                 android:clickable="true"
@@ -267,20 +397,23 @@
                     <TextView
                         android:id="@+id/precio_python"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"                        android:text="$8/hora"
-                        android:textColor="@color/accent_color"
+                        android:layout_height="wrap_content"
+                        android:text="$8/hora"
+                        android:textColor="#5B7CE6"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
                 </LinearLayout>
 
-            </LinearLayout>            <!-- Card Inglés -->
+            </LinearLayout>
+
+            <!-- Card Inglés -->
             <LinearLayout
                 android:id="@+id/card_ingles"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/card_background"
+                android:background="@android:color/white"
                 android:padding="16dp"
                 android:layout_marginBottom="12dp"
                 android:clickable="true"
@@ -324,8 +457,9 @@
                     <TextView
                         android:id="@+id/precio_ingles"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"                        android:text="$6/hora"
-                        android:textColor="@color/accent_color"
+                        android:layout_height="wrap_content"
+                        android:text="$6/hora"
+                        android:textColor="#5B7CE6"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -336,5 +470,44 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <!-- Mensaje de no resultados -->
+    <LinearLayout
+        android:id="@+id/tv_no_resultados"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_filtros_avanzados">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔍"
+            android:textSize="48sp"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No se encontraron resultados"
+            android:textColor="#666666"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Intenta con otros términos o filtros"
+            android:textColor="#999999"
+            android:textSize="14sp"
+            android:gravity="center" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
