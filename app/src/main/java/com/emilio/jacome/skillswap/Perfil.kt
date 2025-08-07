@@ -16,6 +16,7 @@ import com.emilio.jacome.skillswap.utils.AuthenticationHelper
 import com.emilio.jacome.skillswap.utils.SkillRepository
 import com.emilio.jacome.skillswap.utils.UIHelper
 import com.emilio.jacome.skillswap.utils.UserRepository
+import com.emilio.jacome.skillswap.utils.UserProfileCache
 
 class Perfil : AppCompatActivity() {
     
@@ -75,13 +76,41 @@ class Perfil : AppCompatActivity() {
             return
         }
         
+        // Intentar usar datos del caché primero
+        val cachedUser = UserProfileCache.getCachedUser()
+        val cachedSkills = UserProfileCache.getCachedSkills()
+        
+        if (cachedUser != null && cachedSkills != null) {
+            // Usar datos del caché
+            currentUser = cachedUser
+            userSkills = cachedSkills
+            updateBasicUserInfo(cachedUser)
+            updateUserRating()
+            updateSkillsUI(cachedSkills)
+            showProfileContent()
+            return
+        }
+        
         showLoadingState(true)
         
+        // Solo cargar datos del usuario si no están en caché
+        if (cachedUser == null) {
+            loadUserFromFirebase(userId)
+        } else {
+            // Si tenemos usuario cacheado pero no skills, usar el usuario cacheado
+            currentUser = cachedUser
+            updateBasicUserInfo(cachedUser)
+            loadUserSkills(userId)
+        }
+    }
+    
+    private fun loadUserFromFirebase(userId: String) {
         UserRepository.getUser(userId)
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     currentUser = document.toObject(User::class.java)
                     currentUser?.let { user ->
+                        UserProfileCache.setCachedUser(user)
                         updateBasicUserInfo(user)
                         loadUserSkills(userId)
                     }
@@ -99,11 +128,26 @@ class Perfil : AppCompatActivity() {
     }
     
     private fun loadUserSkills(userId: String) {
+        // Verificar si tenemos skills cacheadas válidas
+        val cachedSkills = UserProfileCache.getCachedSkills()
+        if (cachedSkills != null) {
+            userSkills = cachedSkills
+            updateUserRating()
+            updateSkillsUI(cachedSkills)
+            showLoadingState(false)
+            showProfileContent()
+            return
+        }
+        
+        // Si no hay caché, cargar desde Firebase
         SkillRepository.getUserSkills(userId)
             .addOnSuccessListener { querySnapshot ->
                 userSkills = querySnapshot.toObjects(Skill::class.java)
                     .sortedByDescending { it.createdAt }
 
+                // Guardar en caché
+                UserProfileCache.setCachedSkills(userSkills)
+                
                 updateUserRating()
                 updateSkillsUI(userSkills)
                 showLoadingState(false)
@@ -284,6 +328,8 @@ class Perfil : AppCompatActivity() {
     }
     
     private fun logout() {
+        // Limpiar caché al hacer logout
+        UserProfileCache.invalidateAll()
         AuthenticationHelper.logout()
         
         val intent = Intent(this, Inicio::class.java)
@@ -294,6 +340,26 @@ class Perfil : AppCompatActivity() {
     
     override fun onResume() {
         super.onResume()
-        loadUserData()
+        
+        // Solo recargar si no hay skills válidas en caché
+        // Esto permite que se recarguen las skills después de crear/editar/eliminar una habilidad
+        if (!UserProfileCache.hasValidSkillsCache()) {
+            loadUserData()
+        } else {
+            // Si tenemos caché válido, solo mostrar los datos
+            val cachedUser = UserProfileCache.getCachedUser()
+            val cachedSkills = UserProfileCache.getCachedSkills()
+            
+            if (cachedUser != null && cachedSkills != null) {
+                currentUser = cachedUser
+                userSkills = cachedSkills
+                updateBasicUserInfo(cachedUser)
+                updateUserRating()
+                updateSkillsUI(cachedSkills)
+                showProfileContent()
+            } else {
+                loadUserData()
+            }
+        }
     }
 }

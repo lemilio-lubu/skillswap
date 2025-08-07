@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.emilio.jacome.skillswap.model.Skill
 import com.emilio.jacome.skillswap.utils.Constants
 import com.emilio.jacome.skillswap.utils.SkillRepository
+import com.emilio.jacome.skillswap.utils.UserProfileCache
 
 class CrearHabilidad : AppCompatActivity() {
 
@@ -29,12 +30,12 @@ class CrearHabilidad : AppCompatActivity() {
         val spinnerCategoria = findViewById<Spinner>(R.id.spinner_categoria)
         val spinnerModalidad = findViewById<Spinner>(R.id.spinner_modalidad)
 
-        val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.CATEGORIES)
-        adapterCategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val adapterCategorias = ArrayAdapter(this, R.layout.custom_spinner_item, Constants.CATEGORIES)
+        adapterCategorias.setDropDownViewResource(R.layout.custom_spinner_dropdown_item)
         spinnerCategoria.adapter = adapterCategorias
 
-        val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.MODALITIES)
-        adapterModalidad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val adapterModalidad = ArrayAdapter(this, R.layout.custom_spinner_item, Constants.MODALITIES)
+        adapterModalidad.setDropDownViewResource(R.layout.custom_spinner_dropdown_item)
         spinnerModalidad.adapter = adapterModalidad
 
         btnBack.setOnClickListener {
@@ -101,6 +102,8 @@ class CrearHabilidad : AppCompatActivity() {
 
         SkillRepository.createSkill(skill)
             .addOnSuccessListener {
+                // Invalidar caché de skills para que se recarguen en el perfil
+                UserProfileCache.invalidateSkillsCache()
                 Toast.makeText(this, getString(R.string.habilidad_creada_exito), Toast.LENGTH_SHORT).show()
                 finish()
             }

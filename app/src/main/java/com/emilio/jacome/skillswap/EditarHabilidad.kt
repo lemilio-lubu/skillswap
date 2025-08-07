@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.emilio.jacome.skillswap.utils.Constants
 import com.emilio.jacome.skillswap.utils.SkillRepository
+import com.emilio.jacome.skillswap.utils.UserProfileCache
 
 class EditarHabilidad : AppCompatActivity() {
 
@@ -37,12 +38,12 @@ class EditarHabilidad : AppCompatActivity() {
         val tvRating = findViewById<TextView>(R.id.tv_rating)
         val tvSesionesCompletadas = findViewById<TextView>(R.id.tv_sesiones_completadas)
 
-        val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.CATEGORIES)
-        adapterCategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val adapterCategorias = ArrayAdapter(this, R.layout.custom_spinner_item, Constants.CATEGORIES)
+        adapterCategorias.setDropDownViewResource(R.layout.custom_spinner_dropdown_item)
         spinnerCategoria.adapter = adapterCategorias
 
-        val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.MODALITIES)
-        adapterModalidad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val adapterModalidad = ArrayAdapter(this, R.layout.custom_spinner_item, Constants.MODALITIES)
+        adapterModalidad.setDropDownViewResource(R.layout.custom_spinner_dropdown_item)
         spinnerModalidad.adapter = adapterModalidad
 
         skillId = intent.getStringExtra("skill_id") ?: ""
@@ -132,6 +133,8 @@ class EditarHabilidad : AppCompatActivity() {
 
         SkillRepository.deleteSkill(skillId)
             .addOnSuccessListener {
+                // Invalidar caché de skills para que se recarguen en el perfil
+                UserProfileCache.invalidateSkillsCache()
                 Toast.makeText(this, getString(R.string.habilidad_eliminada), Toast.LENGTH_SHORT).show()
                 finish()
             }
@@ -162,6 +165,8 @@ class EditarHabilidad : AppCompatActivity() {
 
         SkillRepository.updateSkill(skillId, updates)
             .addOnSuccessListener {
+                // Invalidar caché de skills para que se recarguen en el perfil
+                UserProfileCache.invalidateSkillsCache()
                 Toast.makeText(this, getString(R.string.cambios_guardados), Toast.LENGTH_SHORT).show()
                 finish()
             }
