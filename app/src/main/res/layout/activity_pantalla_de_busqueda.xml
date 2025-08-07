@@ -47,12 +47,15 @@
 
     </LinearLayout>
 
-    <!-- Contenedor de búsqueda con sugerencias -->
-    <RelativeLayout
+    <!-- Contenedor de búsqueda simplificado -->
+    <LinearLayout
         android:id="@+id/search_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/header_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -90,22 +93,22 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp" />
 
-        </LinearLayout>
+        <EditText
+            android:id="@+id/et_buscar"
+            android:layout_width="0dp"
+            android:layout_height="49dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="Buscar habilidades, instructores, categorías..."
+            android:inputType="text"
+            android:textColor="#333333"
+            android:textColorHint="#999999"
+            android:textSize="16sp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp" />
 
-        <!-- Panel de sugerencias -->
-        <LinearLayout
-            android:id="@+id/layout_sugerencias"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/search_layout"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:elevation="4dp"
-            android:visibility="gone">
-            <!-- Las sugerencias se añaden dinámicamente -->
-        </LinearLayout>
+    </LinearLayout>
 
-    </RelativeLayout>
 
     <!-- Contador de resultados -->
     <TextView
@@ -146,7 +149,6 @@
             android:gravity="center_vertical">
 
             <!-- Las categorías se añaden dinámicamente aquí -->
-
         </LinearLayout>
 
     </HorizontalScrollView>
@@ -183,7 +185,6 @@
             android:padding="16dp">
 
             <!-- Las cards de habilidades se añaden dinámicamente aquí -->
-
         </LinearLayout>
 
     </ScrollView>
