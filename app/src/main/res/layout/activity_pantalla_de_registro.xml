@@ -60,7 +60,8 @@
                 android:text="@string/full_name"
                 android:textColor="#333333"
                 android:textSize="14sp"
-                android:layout_marginBottom="8dp" />            <EditText
+                android:layout_marginBottom="8dp" />
+            <EditText
                 android:id="@+id/et_nombre_completo"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -82,7 +83,8 @@
                 android:text="@string/email"
                 android:textColor="#333333"
                 android:textSize="14sp"
-                android:layout_marginBottom="8dp" />            <EditText
+                android:layout_marginBottom="8dp" />
+            <EditText
                 android:id="@+id/et_email"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -104,7 +106,8 @@
                 android:text="@string/univ_inst"
                 android:textColor="#333333"
                 android:textSize="14sp"
-                android:layout_marginBottom="8dp" />            <EditText
+                android:layout_marginBottom="8dp" />
+            <EditText
                 android:id="@+id/et_universidad"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -126,7 +129,8 @@
                 android:text="@string/password"
                 android:textColor="#333333"
                 android:textSize="14sp"
-                android:layout_marginBottom="8dp" />            <EditText
+                android:layout_marginBottom="8dp" />
+            <EditText
                 android:id="@+id/et_contrasena"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -148,7 +152,8 @@
                 android:text="@string/confirm_password"
                 android:textColor="#333333"
                 android:textSize="14sp"
-                android:layout_marginBottom="8dp" />            <EditText
+                android:layout_marginBottom="8dp" />
+            <EditText
                 android:id="@+id/et_confirmar_contrasena"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -167,7 +172,8 @@
                 android:id="@+id/btn_crear_cuenta"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:text="@string/create_account"                android:textColor="@android:color/white"
+                android:text="@string/create_account"
+                android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:backgroundTint="@color/accent_color"

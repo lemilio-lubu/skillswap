@@ -100,4 +100,17 @@
     <string name="no">No</string>
     <string name="default_students">0 estudiantes</string>
     <string name="star_emoji">⭐</string>
+
+    <!-- Pantalla de registro -->
+    <string name="register_title">Crear Cuenta</string>
+    <string name="full_name">Nombre completo</string>
+    <string name="name_placeholder">Tu nombre completo</string>
+    <string name="email">Email</string>
+    <string name="email_placeholder">tu@email.com</string>
+    <string name="univ_inst">Universidad/Institución</string>
+    <string name="univ_inst_placeholder">Ej. Universidad Nacional</string>
+    <string name="password">Contraseña</string>
+    <string name="password_placeholder">••••••••</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="create_account">Crear Cuenta</string>
 </resources>
