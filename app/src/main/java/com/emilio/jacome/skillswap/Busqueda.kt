@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import com.emilio.jacome.skillswap.utils.Constants
 import com.emilio.jacome.skillswap.utils.SkillRepository
+import com.emilio.jacome.skillswap.model.Skill
+import com.google.firebase.firestore.QuerySnapshot
 
 class Busqueda : AppCompatActivity() {
 
@@ -34,21 +36,9 @@ class Busqueda : AppCompatActivity() {
     private lateinit var layoutFiltrosAvanzados: LinearLayout
     private var filtrosAvanzadosVisible = false
 
-    // Data classes simples para usar internamente
-    data class SimpleSkill(
-        val id: String,
-        val title: String,
-        val description: String,
-        val category: String,
-        val price: Double,
-        val modalidad: String,
-        val userId: String,
-        val userName: String
-    )
-
     // Data
-    private var allSkills = mutableListOf<SimpleSkill>()
-    private var filteredSkills = mutableListOf<SimpleSkill>()
+    private var allSkills = mutableListOf<Skill>()
+    private var filteredSkills = mutableListOf<Skill>()
     private var selectedCategory = "Todas"
     private var selectedPriceRange = "Todos los precios"
     private var selectedModality = "Todas las modalidades"
@@ -205,6 +195,49 @@ class Busqueda : AppCompatActivity() {
 
     private fun filterSkills(query: String) {
         val normalizedQuery = normalizeText(query)
+        
+        // Si la consulta es específica, usar búsqueda de Firebase
+        if (query.length >= 3) {
+            performFirebaseSearch(query)
+        } else {
+            // Para consultas cortas, filtrar localmente
+            performLocalSearch(normalizedQuery)
+        }
+    }
+
+    private fun performFirebaseSearch(query: String) {
+        progressBar.visibility = View.VISIBLE
+        
+        SkillRepository.searchSkills(query)
+            .addOnSuccessListener { querySnapshot ->
+                progressBar.visibility = View.GONE
+                val searchResults = mutableListOf<Skill>()
+                
+                for (document in querySnapshot.documents) {
+                    val skill = document.toObject(Skill::class.java)
+                    skill?.let { searchResults.add(it) }
+                }
+                
+                // Combinar resultados de Firebase con filtros locales
+                filteredSkills.clear()
+                filteredSkills.addAll(searchResults.filter { skill ->
+                    val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
+                    val matchesPrice = matchesPriceRange(skill.price)
+                    val matchesModality = selectedModality == "Todas las modalidades" || skill.modalidad == selectedModality
+                    
+                    matchesCategory && matchesPrice && matchesModality
+                })
+                
+                updateSkillsDisplay()
+            }
+            .addOnFailureListener {
+                progressBar.visibility = View.GONE
+                // En caso de error, usar búsqueda local
+                performLocalSearch(normalizeText(query))
+            }
+    }
+
+    private fun performLocalSearch(normalizedQuery: String) {
         filteredSkills.clear()
 
         filteredSkills.addAll(allSkills.filter { skill ->
@@ -227,8 +260,43 @@ class Busqueda : AppCompatActivity() {
         if (etBuscar.text.toString().trim().isNotEmpty()) {
             filterSkills(etBuscar.text.toString().trim())
         } else {
-            applyAllFilters()
+            // Si no hay texto de búsqueda, usar filtro de categoría de Firebase
+            if (selectedCategory != "Todas") {
+                loadSkillsByCategory(selectedCategory)
+            } else {
+                applyAllFilters()
+            }
         }
+    }
+
+    private fun loadSkillsByCategory(category: String) {
+        progressBar.visibility = View.VISIBLE
+        
+        SkillRepository.getSkillsByCategory(category)
+            .addOnSuccessListener { querySnapshot ->
+                progressBar.visibility = View.GONE
+                filteredSkills.clear()
+                
+                for (document in querySnapshot.documents) {
+                    val skill = document.toObject(Skill::class.java)
+                    skill?.let { 
+                        // Aplicar filtros adicionales
+                        val matchesPrice = matchesPriceRange(it.price)
+                        val matchesModality = selectedModality == "Todas las modalidades" || it.modalidad == selectedModality
+                        
+                        if (matchesPrice && matchesModality) {
+                            filteredSkills.add(it)
+                        }
+                    }
+                }
+                
+                updateSkillsDisplay()
+            }
+            .addOnFailureListener {
+                progressBar.visibility = View.GONE
+                // En caso de error, usar filtro local
+                applyAllFilters()
+            }
     }
 
     private fun applyAllFilters() {
@@ -320,9 +388,33 @@ class Busqueda : AppCompatActivity() {
     private fun loadSkills() {
         progressBar.visibility = View.VISIBLE
 
-        // Datos de ejemplo usando la clase simple
+        // Cargar skills desde Firebase
+        SkillRepository.getAllActiveSkills()
+            .addOnSuccessListener { querySnapshot ->
+                progressBar.visibility = View.GONE
+                allSkills.clear()
+                
+                for (document in querySnapshot.documents) {
+                    val skill = document.toObject(Skill::class.java)
+                    skill?.let { allSkills.add(it) }
+                }
+
+                // Configurar clicks de las cards originales
+                setupOriginalCards()
+
+                applyAllFilters()
+            }
+            .addOnFailureListener { exception ->
+                progressBar.visibility = View.GONE
+                // En caso de error, mostrar mensaje o usar datos de ejemplo
+                loadFallbackData()
+            }
+    }
+
+    private fun loadFallbackData() {
+        // Datos de ejemplo como fallback en caso de error con Firebase
         val exampleSkills = listOf(
-            SimpleSkill(
+            Skill(
                 id = "1",
                 title = "Matemáticas básicas",
                 description = "Ayudo con álgebra, geometría y cálculo básico. Explico conceptos claros y ejercicios prácticos.",
@@ -332,7 +424,7 @@ class Busqueda : AppCompatActivity() {
                 userId = "user1",
                 userName = "María García"
             ),
-            SimpleSkill(
+            Skill(
                 id = "2",
                 title = "Python para principiantes",
                 description = "Aprende programación desde cero. Incluye proyectos prácticos y ejercicios.",
@@ -342,7 +434,7 @@ class Busqueda : AppCompatActivity() {
                 userId = "user2",
                 userName = "Carlos López"
             ),
-            SimpleSkill(
+            Skill(
                 id = "3",
                 title = "Inglés conversacional",
                 description = "Practica conversación en inglés. Mejora tu fluidez y confianza al hablar.",
@@ -351,36 +443,12 @@ class Busqueda : AppCompatActivity() {
                 modalidad = "Híbrida",
                 userId = "user3",
                 userName = "Ana Ruiz"
-            ),
-            SimpleSkill(
-                id = "4",
-                title = "Guitarra para principiantes",
-                description = "Aprende a tocar guitarra desde cero. Incluye acordes básicos y canciones populares.",
-                category = "Arte",
-                price = 7.0,
-                modalidad = "Presencial",
-                userId = "user4",
-                userName = "Pedro Música"
-            ),
-            SimpleSkill(
-                id = "5",
-                title = "Cálculo diferencial",
-                description = "Matemáticas avanzadas: límites, derivadas y aplicaciones prácticas.",
-                category = "Matemáticas",
-                price = 12.0,
-                modalidad = "Virtual",
-                userId = "user5",
-                userName = "Ana Números"
             )
         )
 
-        progressBar.visibility = View.GONE
         allSkills.clear()
         allSkills.addAll(exampleSkills)
-
-        // Configurar clicks de las cards originales
         setupOriginalCards()
-
         applyAllFilters()
     }
 
@@ -391,39 +459,56 @@ class Busqueda : AppCompatActivity() {
             val cardPython = findViewById<LinearLayout>(R.id.card_python)
             val cardIngles = findViewById<LinearLayout>(R.id.card_ingles)
 
+            // Buscar skills específicas en los datos cargados
+            val matematicasSkill = allSkills.find { it.title.contains("Matemáticas", ignoreCase = true) || it.category == "Matemáticas" }
+            val pythonSkill = allSkills.find { it.title.contains("Python", ignoreCase = true) || it.title.contains("Programación", ignoreCase = true) }
+            val inglesSkill = allSkills.find { it.title.contains("Inglés", ignoreCase = true) || it.category == "Idiomas" }
+
             cardMatematicas?.setOnClickListener {
+                val skill = matematicasSkill
                 val intent = Intent(this, DetalleHabilidad::class.java)
-                intent.putExtra("skill_title", "Matemáticas básicas")
-                intent.putExtra("skill_description", "Ayudo con álgebra, geometría y cálculo básico")
-                intent.putExtra("instructor_name", "María García")
-                intent.putExtra("instructor_avatar", "MG")
-                intent.putExtra("skill_price", "5.0")
-                intent.putExtra("skill_category", "Matemáticas")
-                intent.putExtra("skill_modalidad", "Presencial")
+                intent.putExtra("skill_title", skill?.title ?: "Matemáticas básicas")
+                intent.putExtra("skill_description", skill?.description ?: "Ayudo con álgebra, geometría y cálculo básico")
+                intent.putExtra("instructor_name", skill?.userName ?: "María García")
+                intent.putExtra("instructor_avatar", skill?.userAvatar ?: "MG")
+                intent.putExtra("skill_price", skill?.price?.toString() ?: "5.0")
+                intent.putExtra("skill_category", skill?.category ?: "Matemáticas")
+                intent.putExtra("skill_modalidad", skill?.modalidad ?: "Presencial")
+                intent.putExtra("skill_rating", skill?.rating?.toString() ?: "0.0")
+                intent.putExtra("skill_review_count", skill?.reviewCount?.toString() ?: "0")
+                intent.putExtra("skill_id", skill?.id ?: "")
                 startActivity(intent)
             }
 
             cardPython?.setOnClickListener {
+                val skill = pythonSkill
                 val intent = Intent(this, DetalleHabilidad::class.java)
-                intent.putExtra("skill_title", "Python para principiantes")
-                intent.putExtra("skill_description", "Enseño fundamentos de Python desde cero")
-                intent.putExtra("instructor_name", "Carlos López")
-                intent.putExtra("instructor_avatar", "CL")
-                intent.putExtra("skill_price", "8.0")
-                intent.putExtra("skill_category", "Programación")
-                intent.putExtra("skill_modalidad", "Virtual")
+                intent.putExtra("skill_title", skill?.title ?: "Python para principiantes")
+                intent.putExtra("skill_description", skill?.description ?: "Enseño fundamentos de Python desde cero")
+                intent.putExtra("instructor_name", skill?.userName ?: "Carlos López")
+                intent.putExtra("instructor_avatar", skill?.userAvatar ?: "CL")
+                intent.putExtra("skill_price", skill?.price?.toString() ?: "8.0")
+                intent.putExtra("skill_category", skill?.category ?: "Programación")
+                intent.putExtra("skill_modalidad", skill?.modalidad ?: "Virtual")
+                intent.putExtra("skill_rating", skill?.rating?.toString() ?: "0.0")
+                intent.putExtra("skill_review_count", skill?.reviewCount?.toString() ?: "0")
+                intent.putExtra("skill_id", skill?.id ?: "")
                 startActivity(intent)
             }
 
             cardIngles?.setOnClickListener {
+                val skill = inglesSkill
                 val intent = Intent(this, DetalleHabilidad::class.java)
-                intent.putExtra("skill_title", "Inglés conversacional")
-                intent.putExtra("skill_description", "Práctica de conversación en inglés")
-                intent.putExtra("instructor_name", "Ana Martínez")
-                intent.putExtra("instructor_avatar", "AM")
-                intent.putExtra("skill_price", "6.0")
-                intent.putExtra("skill_category", "Idiomas")
-                intent.putExtra("skill_modalidad", "Híbrida")
+                intent.putExtra("skill_title", skill?.title ?: "Inglés conversacional")
+                intent.putExtra("skill_description", skill?.description ?: "Práctica de conversación en inglés")
+                intent.putExtra("instructor_name", skill?.userName ?: "Ana Martínez")
+                intent.putExtra("instructor_avatar", skill?.userAvatar ?: "AM")
+                intent.putExtra("skill_price", skill?.price?.toString() ?: "6.0")
+                intent.putExtra("skill_category", skill?.category ?: "Idiomas")
+                intent.putExtra("skill_modalidad", skill?.modalidad ?: "Híbrida")
+                intent.putExtra("skill_rating", skill?.rating?.toString() ?: "0.0")
+                intent.putExtra("skill_review_count", skill?.reviewCount?.toString() ?: "0")
+                intent.putExtra("skill_id", skill?.id ?: "")
                 startActivity(intent)
             }
         } catch (e: Exception) {
@@ -498,7 +583,7 @@ class Busqueda : AppCompatActivity() {
         cardIngles?.visibility = if (filteredTitles.contains("inglés conversacional")) View.VISIBLE else View.GONE
     }
 
-    private fun createSkillCard(skill: SimpleSkill): LinearLayout {
+    private fun createSkillCard(skill: Skill): LinearLayout {
         val cardLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(getColor(android.R.color.white))
@@ -562,7 +647,7 @@ class Busqueda : AppCompatActivity() {
         }
 
         val priceView = TextView(this).apply {
-            text = "$${skill.price.toInt()}/hora"
+            text = skill.getFormattedPrice()
             setTextColor(getColor(android.R.color.holo_blue_light))
             textSize = 14f
             setTypeface(null, android.graphics.Typeface.BOLD)
@@ -581,10 +666,13 @@ class Busqueda : AppCompatActivity() {
             intent.putExtra("skill_title", skill.title)
             intent.putExtra("skill_description", skill.description)
             intent.putExtra("instructor_name", skill.userName)
-            intent.putExtra("instructor_avatar", skill.userName.split(" ").map { it.first() }.joinToString(""))
+            intent.putExtra("instructor_avatar", if (skill.userAvatar.isNotEmpty()) skill.userAvatar else skill.userName.split(" ").map { it.first() }.joinToString(""))
             intent.putExtra("skill_price", skill.price.toString())
             intent.putExtra("skill_category", skill.category)
             intent.putExtra("skill_modalidad", skill.modalidad)
+            intent.putExtra("skill_rating", skill.rating.toString())
+            intent.putExtra("skill_review_count", skill.reviewCount.toString())
+            intent.putExtra("skill_id", skill.id)
             startActivity(intent)
         }
 
