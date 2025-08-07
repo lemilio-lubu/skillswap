@@ -29,19 +29,15 @@ class Busqueda : AppCompatActivity() {
     private lateinit var filtroMatematicas: TextView
     private lateinit var filtroProgramacion: TextView
 
-    // Filtros avanzados
-    private lateinit var spinnerPrecio: Spinner
-    private lateinit var spinnerModalidad: Spinner
-    private lateinit var btnFiltrosAvanzados: Button
-    private lateinit var layoutFiltrosAvanzados: LinearLayout
-    private var filtrosAvanzadosVisible = false
+    // Botón y layout de categorías
+    private lateinit var btnCategorias: Button
+    private lateinit var layoutCategorias: LinearLayout
+    private var categoriasVisible = false
 
     // Data
     private var allSkills = mutableListOf<Skill>()
     private var filteredSkills = mutableListOf<Skill>()
     private var selectedCategory = "Todas"
-    private var selectedPriceRange = "Todos los precios"
-    private var selectedModality = "Todas las modalidades"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +46,6 @@ class Busqueda : AppCompatActivity() {
         initViews()
         setupSearchFunctionality()
         setupCategoryFilters()
-        setupAdvancedFilters()
         setupNavigationButtons()
         loadSkills()
     }
@@ -70,11 +65,9 @@ class Busqueda : AppCompatActivity() {
         filtroMatematicas = findViewById(R.id.filtro_matematicas)
         filtroProgramacion = findViewById(R.id.filtro_programacion)
 
-        // Filtros avanzados
-        spinnerPrecio = findViewById(R.id.spinner_precio)
-        spinnerModalidad = findViewById(R.id.spinner_modalidad_filtro)
-        btnFiltrosAvanzados = findViewById(R.id.btn_filtros_avanzados)
-        layoutFiltrosAvanzados = findViewById(R.id.layout_filtros_avanzados)
+        // Botón y layout de categorías
+        btnCategorias = findViewById(R.id.btn_categorias)
+        layoutCategorias = findViewById(R.id.layout_categorias)
     }
 
     private fun setupNavigationButtons() {
@@ -125,53 +118,24 @@ class Busqueda : AppCompatActivity() {
                 selectCategoryFilter(view, category)
                 selectedCategory = category
                 filterSkillsByCategory()
+                // Ocultar el panel de categorías después de seleccionar
+                toggleCategoryFilters()
             }
         }
 
         // Seleccionar "Todas" por defecto
         selectCategoryFilter(filtroTodas, "Todas")
+
+        // Configurar botón de categorías
+        btnCategorias.setOnClickListener {
+            toggleCategoryFilters()
+        }
     }
 
-    private fun setupAdvancedFilters() {
-        // Configurar spinner de precios
-        val preciosAdapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_item,
-            listOf("Todos los precios", "$0-$5", "$5-$10", "$10-$20", "$20+")
-        )
-        preciosAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerPrecio.adapter = preciosAdapter
-
-        // Configurar spinner de modalidad
-        val modalidadAdapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_spinner_item,
-            listOf("Todas las modalidades", "Presencial", "Virtual", "Híbrida")
-        )
-        modalidadAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerModalidad.adapter = modalidadAdapter
-
-        // Listeners
-        spinnerPrecio.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedPriceRange = parent?.getItemAtPosition(position).toString()
-                applyAllFilters()
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-        spinnerModalidad.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedModality = parent?.getItemAtPosition(position).toString()
-                applyAllFilters()
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-        // Botón filtros avanzados
-        btnFiltrosAvanzados.setOnClickListener {
-            toggleAdvancedFilters()
-        }
+    private fun toggleCategoryFilters() {
+        categoriasVisible = !categoriasVisible
+        layoutCategorias.visibility = if (categoriasVisible) View.VISIBLE else View.GONE
+        btnCategorias.text = if (categoriasVisible) "Ocultar categorías" else "Categorías"
     }
 
     private fun selectCategoryFilter(selectedFilter: TextView, category: String) {
@@ -185,12 +149,6 @@ class Busqueda : AppCompatActivity() {
         // Seleccionar el filtro actual
         selectedFilter.setBackgroundColor(getColor(android.R.color.holo_blue_light))
         selectedFilter.setTextColor(getColor(android.R.color.white))
-    }
-
-    private fun toggleAdvancedFilters() {
-        filtrosAvanzadosVisible = !filtrosAvanzadosVisible
-        layoutFiltrosAvanzados.visibility = if (filtrosAvanzadosVisible) View.VISIBLE else View.GONE
-        btnFiltrosAvanzados.text = if (filtrosAvanzadosVisible) "Ocultar filtros" else "Más filtros"
     }
 
     private fun filterSkills(query: String) {
@@ -222,10 +180,7 @@ class Busqueda : AppCompatActivity() {
                 filteredSkills.clear()
                 filteredSkills.addAll(searchResults.filter { skill ->
                     val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
-                    val matchesPrice = matchesPriceRange(skill.price)
-                    val matchesModality = selectedModality == "Todas las modalidades" || skill.modalidad == selectedModality
-                    
-                    matchesCategory && matchesPrice && matchesModality
+                    matchesCategory
                 })
                 
                 updateSkillsDisplay()
@@ -247,10 +202,8 @@ class Busqueda : AppCompatActivity() {
                     normalizeText(skill.userName).contains(normalizedQuery)
 
             val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
-            val matchesPrice = matchesPriceRange(skill.price)
-            val matchesModality = selectedModality == "Todas las modalidades" || skill.modalidad == selectedModality
 
-            matchesQuery && matchesCategory && matchesPrice && matchesModality
+            matchesQuery && matchesCategory
         })
 
         updateSkillsDisplay()
@@ -269,24 +222,10 @@ class Busqueda : AppCompatActivity() {
 
         filteredSkills.addAll(allSkills.filter { skill ->
             val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
-            val matchesPrice = matchesPriceRange(skill.price)
-            val matchesModality = selectedModality == "Todas las modalidades" || skill.modalidad == selectedModality
-
-            matchesCategory && matchesPrice && matchesModality
+            matchesCategory
         })
 
         updateSkillsDisplay()
-    }
-
-    private fun matchesPriceRange(price: Double): Boolean {
-        return when (selectedPriceRange) {
-            "Todos los precios" -> true
-            "$0-$5" -> price <= 5.0
-            "$5-$10" -> price > 5.0 && price <= 10.0
-            "$10-$20" -> price > 10.0 && price <= 20.0
-            "$20+" -> price > 20.0
-            else -> true
-        }
     }
 
     private fun showSugerencias(query: String) {

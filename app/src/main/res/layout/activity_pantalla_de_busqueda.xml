@@ -123,93 +123,24 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Filtros de categorías -->
-    <HorizontalScrollView
-        android:id="@+id/filtros_scroll"
-        android:layout_width="419dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="8dp"
-        android:background="@android:color/white"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp"
-        android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_resultados_contador">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/filtro_todas"
-                android:layout_width="114dp"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="8dp"
-                android:background="#5B7CE6"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="Todas"
-                android:textColor="@android:color/white"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/filtro_matematicas"
-                android:layout_width="125dp"
-                android:layout_height="36dp"
-                android:layout_marginEnd="8dp"
-                android:background="#E0E0E0"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="Matemáticas"
-                android:textColor="@android:color/black"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/filtro_programacion"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:background="#E0E0E0"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="Programación"
-                android:textColor="@android:color/black"
-                android:textSize="14sp" />
-
-        </LinearLayout>
-
-    </HorizontalScrollView>
-
-    <!-- Botón para filtros avanzados -->
     <Button
-        android:id="@+id/btn_filtros_avanzados"
+        android:id="@+id/btn_categorias"
         android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:background="@android:drawable/btn_default"
-        android:text="Más filtros"
+        android:text="Categorías"
         android:textColor="#000000"
         android:textSize="12sp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filtros_scroll" />
+        app:layout_constraintTop_toBottomOf="@id/tv_resultados_contador" />
 
-    <!-- Filtros avanzados (ocultos inicialmente) -->
+    <!-- Filtros de categorías (ocultos inicialmente) -->
     <LinearLayout
-        android:id="@+id/layout_filtros_avanzados"
+        android:id="@+id/layout_categorias"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -221,36 +152,67 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_filtros_avanzados">
+        app:layout_constraintTop_toBottomOf="@id/btn_categorias">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rango de precio"
+            android:text="Seleccionar categoría"
             android:textColor="#333333"
             android:textSize="14sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
-        <Spinner
-            android:id="@+id/spinner_precio"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Modalidad"
-            android:textColor="#333333"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+            android:orientation="vertical">
 
-        <Spinner
-            android:id="@+id/spinner_modalidad_filtro"
-            android:layout_width="match_parent"
-            android:layout_height="40dp" />
+            <TextView
+                android:id="@+id/filtro_todas"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="4dp"
+                android:background="#5B7CE6"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="Todas"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/filtro_matematicas"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="4dp"
+                android:background="#E0E0E0"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="Matemáticas"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/filtro_programacion"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#E0E0E0"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="Programación"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -263,7 +225,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_filtros_avanzados" />
+        app:layout_constraintTop_toBottomOf="@id/layout_categorias" />
 
     <!-- ScrollView con contenido de habilidades -->
     <ScrollView
@@ -272,7 +234,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/layout_filtros_avanzados"
+        app:layout_constraintTop_toBottomOf="@id/layout_categorias"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -482,7 +444,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layout_filtros_avanzados">
+        app:layout_constraintTop_toBottomOf="@id/layout_categorias">
 
         <TextView
             android:layout_width="wrap_content"
