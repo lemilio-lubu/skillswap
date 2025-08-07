@@ -25,14 +25,15 @@ class CrearHabilidad : AppCompatActivity() {
         val etTitulo = findViewById<EditText>(R.id.et_titulo)
         val etDescripcion = findViewById<EditText>(R.id.et_descripcion)
         val etPrecio = findViewById<EditText>(R.id.et_precio)
+        val etIncluye = findViewById<EditText>(R.id.et_incluye)
         val spinnerCategoria = findViewById<Spinner>(R.id.spinner_categoria)
         val spinnerModalidad = findViewById<Spinner>(R.id.spinner_modalidad)
 
-        val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Categories.LIST)
+        val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.CATEGORIES)
         adapterCategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCategoria.adapter = adapterCategorias
 
-        val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Modalities.LIST_WITH_DEFAULT)
+        val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.MODALITIES)
         adapterModalidad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerModalidad.adapter = adapterModalidad
 
@@ -44,8 +45,9 @@ class CrearHabilidad : AppCompatActivity() {
             val titulo = etTitulo.text.toString().trim()
             val descripcion = etDescripcion.text.toString().trim()
             val precioText = etPrecio.text.toString().trim()
+            val incluye = etIncluye.text.toString().trim()
             val categoria = spinnerCategoria.selectedItem.toString()
-            val modalidadIndex = spinnerModalidad.selectedItemPosition
+            val modalidad = spinnerModalidad.selectedItem.toString()
 
             when {
                 titulo.isEmpty() -> {
@@ -57,8 +59,8 @@ class CrearHabilidad : AppCompatActivity() {
                 precioText.isEmpty() -> {
                     Toast.makeText(this, getString(R.string.error_precio_vacio), Toast.LENGTH_SHORT).show()
                 }
-                modalidadIndex == 0 -> {
-                    Toast.makeText(this, getString(R.string.error_modalidad_no_seleccionada), Toast.LENGTH_SHORT).show()
+                incluye.isEmpty() -> {
+                    Toast.makeText(this, getString(R.string.error_incluye_vacio), Toast.LENGTH_SHORT).show()
                 }
                 else -> {
                     crearNuevaHabilidad(
@@ -66,14 +68,16 @@ class CrearHabilidad : AppCompatActivity() {
                         descripcion,
                         precioText.toDouble(),
                         categoria,
-                        Constants.Modalities.LIST_WITH_DEFAULT[modalidadIndex]
+                        modalidad,
+                        incluye
                     )
                 }
             }
         }
     }
 
-    private fun crearNuevaHabilidad(titulo: String, descripcion: String, precio: Double, categoria: String, modalidad: String) {
+    private fun crearNuevaHabilidad(titulo: String, descripcion: String, precio: Double,
+                                   categoria: String, modalidad: String, incluye: String) {
         val userId = FirebaseManager.getCurrentUserId()
         val userName = FirebaseManager.getCurrentUserDisplayName() ?: "Usuario"
 
@@ -88,6 +92,7 @@ class CrearHabilidad : AppCompatActivity() {
             category = categoria,
             price = precio,
             modalidad = modalidad,
+            incluye = incluye,
             userId = userId,
             userName = userName
         )

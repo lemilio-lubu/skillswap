@@ -31,16 +31,17 @@ class EditarHabilidad : AppCompatActivity() {
         val etTitulo = findViewById<EditText>(R.id.et_titulo)
         val etDescripcion = findViewById<EditText>(R.id.et_descripcion)
         val etPrecio = findViewById<EditText>(R.id.et_precio)
+        val etIncluye = findViewById<EditText>(R.id.et_incluye)
         val spinnerCategoria = findViewById<Spinner>(R.id.spinner_categoria)
         val spinnerModalidad = findViewById<Spinner>(R.id.spinner_modalidad)
         val tvRating = findViewById<TextView>(R.id.tv_rating)
         val tvSesionesCompletadas = findViewById<TextView>(R.id.tv_sesiones_completadas)
 
-        val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Categories.LIST)
+        val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.CATEGORIES)
         adapterCategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCategoria.adapter = adapterCategorias
 
-        val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Modalities.LIST)
+        val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.MODALITIES)
         adapterModalidad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerModalidad.adapter = adapterModalidad
 
@@ -49,7 +50,8 @@ class EditarHabilidad : AppCompatActivity() {
         val skillDescription = intent.getStringExtra("skill_description") ?: ""
         val skillCategory = intent.getStringExtra("skill_category") ?: "Programación"
         val skillPrice = intent.getStringExtra("skill_price") ?: "0"
-        val skillModalidad = intent.getStringExtra("skill_modalidad") ?: Constants.Modalities.PRESENCIAL
+        val skillModalidad = intent.getStringExtra("skill_modalidad") ?: Constants.MODALITIES[0]
+        val skillIncluye = intent.getStringExtra("skill_incluye") ?: ""
         skillRating = intent.getDoubleExtra("skill_rating", 0.0)
         skillReviewCount = intent.getIntExtra("skill_review_count", 0)
         skillSesionesCompletadas = intent.getIntExtra("skill_sesiones_completadas", 0)
@@ -57,13 +59,14 @@ class EditarHabilidad : AppCompatActivity() {
         etTitulo.setText(skillTitle)
         etDescripcion.setText(skillDescription)
         etPrecio.setText(skillPrice)
-        
-        val categoryPosition = Constants.Categories.LIST.indexOf(skillCategory)
+        etIncluye.setText(skillIncluye)
+
+        val categoryPosition = Constants.CATEGORIES.indexOf(skillCategory)
         if (categoryPosition >= 0) {
             spinnerCategoria.setSelection(categoryPosition)
         }
         
-        val modalityPosition = Constants.Modalities.LIST.indexOf(skillModalidad)
+        val modalityPosition = Constants.MODALITIES.indexOf(skillModalidad)
         if (modalityPosition >= 0) {
             spinnerModalidad.setSelection(modalityPosition)
         }
@@ -95,6 +98,7 @@ class EditarHabilidad : AppCompatActivity() {
             val titulo = etTitulo.text.toString().trim()
             val descripcion = etDescripcion.text.toString().trim()
             val precio = etPrecio.text.toString().trim()
+            val incluye = etIncluye.text.toString().trim()
             val categoria = spinnerCategoria.selectedItem.toString()
             val modalidad = spinnerModalidad.selectedItem.toString()
 
@@ -108,8 +112,11 @@ class EditarHabilidad : AppCompatActivity() {
                 precio.isEmpty() -> {
                     Toast.makeText(this, getString(R.string.error_precio_vacio), Toast.LENGTH_SHORT).show()
                 }
+                incluye.isEmpty() -> {
+                    Toast.makeText(this, getString(R.string.error_incluye_vacio), Toast.LENGTH_SHORT).show()
+                }
                 else -> {
-                    actualizarHabilidad(titulo, descripcion, precio.toDouble(), categoria, modalidad)
+                    actualizarHabilidad(titulo, descripcion, precio.toDouble(), categoria, modalidad, incluye)
                 }
             }
         }
@@ -134,7 +141,8 @@ class EditarHabilidad : AppCompatActivity() {
             }
     }
 
-    private fun actualizarHabilidad(titulo: String, descripcion: String, precio: Double, categoria: String, modalidad: String) {
+    private fun actualizarHabilidad(titulo: String, descripcion: String, precio: Double,
+                                   categoria: String, modalidad: String, incluye: String) {
         if (skillId.isEmpty()) {
             Toast.makeText(this, getString(R.string.error_skill_id_invalido), Toast.LENGTH_SHORT).show()
             return
@@ -148,6 +156,7 @@ class EditarHabilidad : AppCompatActivity() {
             "price" to precio,
             "category" to categoria,
             "modalidad" to modalidad,
+            "incluye" to incluye,
             "updatedAt" to System.currentTimeMillis()
         )
 

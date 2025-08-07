@@ -83,7 +83,7 @@ class Busqueda : AppCompatActivity() {
 
     private fun setupCategoryFilters() {
         // Crear filtros dinámicamente basados en Constants
-        val allCategories = listOf(getString(R.string.category_all)) + Constants.Categories.LIST
+        val allCategories = listOf(getString(R.string.category_all)) + Constants.CATEGORIES
 
         allCategories.forEach { category ->
             val filterView = createCategoryFilterView(category)
@@ -540,13 +540,15 @@ class Busqueda : AppCompatActivity() {
             intent.putExtra("skill_title", skill.title)
             intent.putExtra("skill_description", skill.description)
             intent.putExtra("instructor_name", skill.userName)
-            intent.putExtra("instructor_avatar", if (skill.userAvatar.isNotEmpty()) skill.userAvatar else skill.userName.split(" ").map { it.first() }.joinToString(""))
-            intent.putExtra("skill_price", skill.price.toString())
+            intent.putExtra("instructor_avatar", if (skill.userAvatar.isNotEmpty()) skill.userAvatar else skill.userName.split(" ").map { it.firstOrNull()?.toString() ?: "" }.take(2).joinToString(""))
+            intent.putExtra("skill_price", skill.getFormattedPrice())
             intent.putExtra("skill_category", skill.category)
             intent.putExtra("skill_modalidad", skill.modalidad)
+            intent.putExtra("skill_incluye", skill.incluye)
             intent.putExtra("skill_rating", skill.rating.toString())
             intent.putExtra("skill_review_count", skill.reviewCount.toString())
             intent.putExtra("skill_id", skill.id)
+            intent.putExtra("instructor_id", skill.userId)  // Añadiendo el ID del instructor
             startActivity(intent)
         }
 

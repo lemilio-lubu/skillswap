@@ -7,6 +7,7 @@ data class Skill(
     var category: String = "",
     var price: Double = 0.0,
     var modalidad: String = "", // Nuevo campo para modalidad
+    var incluye: String = "", // Nuevo campo para lo que incluye
     var userId: String = "",
     var userName: String = "",
     var userAvatar: String = "",
@@ -17,7 +18,7 @@ data class Skill(
     var createdAt: Long = System.currentTimeMillis(),
     var updatedAt: Long = System.currentTimeMillis()
 ) {
-    constructor() : this("", "", "", "", 0.0, "", "", "", "", 0.0, 0, 0, true, 0L, 0L)
+    constructor() : this("", "", "", "", 0.0, "", "", "", "", "", 0.0, 0, 0, true, 0L, 0L)
 
     fun getFormattedPrice(): String {
         return "$${price.toInt()}/hora"

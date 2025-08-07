@@ -120,6 +120,28 @@
                 android:inputType="numberDecimal"
                 android:layout_marginBottom="24dp" />
 
+            <!-- Lo que incluye -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lo_que_incluye"
+                android:textColor="#374151"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+            <EditText
+                android:id="@+id/et_incluye"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:hint="@string/hint_incluye"
+                android:padding="16dp"
+                android:background="@drawable/rounded_edittext"
+                android:textColorHint="@color/text_hint"
+                android:textColor="@color/text_primary"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="24dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

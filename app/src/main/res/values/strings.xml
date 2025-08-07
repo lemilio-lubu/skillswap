@@ -35,6 +35,8 @@
     <string name="hint_precio">10</string>
     <string name="modalidad">Modalidad</string>
     <string name="btn_agregar_habilidad">Agregar Nueva Habilidad</string>
+    <string name="lo_que_incluye">Lo que incluye</string>
+    <string name="hint_incluye">• Explicación teórica\n• Ejercicios prácticos\n• Material de apoyo</string>
 
     <!-- EditarHabilidad -->
     <string name="editar_habilidad">Editar Habilidad</string>
@@ -54,6 +56,7 @@
     <string name="error_precio_vacio">Por favor ingresa un precio</string>
     <string name="error_modalidad_no_seleccionada">Por favor selecciona una modalidad</string>
     <string name="error_skill_id_invalido">Error: ID de habilidad no válido</string>
+    <string name="error_incluye_vacio">El campo "Lo que incluye" es obligatorio</string>
 
     <!-- Mensajes de éxito y error -->
     <string name="habilidad_creada_exito">¡Habilidad creada exitosamente!</string>
@@ -113,4 +116,21 @@
     <string name="password_placeholder">••••••••</string>
     <string name="confirm_password">Confirmar contraseña</string>
     <string name="create_account">Crear Cuenta</string>
+
+    <!-- Valores por defecto para pruebas -->
+    <string name="skillswap_title">Skillswap</string>
+    <string name="students_count">%1$d estudiantes</string>
+    <string name="students_active">%1$d estudiantes activos</string>
+    <string name="default_avatar_initials">JD</string>
+    <string name="default_username">Mi perfil</string>
+    <string name="default_university">Universidad Nacional</string>
+    <string name="default_rating">4.8 (25 reseñas)</string>
+    <string name="default_skill_js_title">JavaScript Avanzado</string>
+    <string name="default_skill_js_description">Enseño React, Node.js y desarrollo web moderno.</string>
+    <string name="default_skill_js_students">5 estudiantes activos</string>
+    <string name="default_skill_js_price">$7/hora</string>
+    <string name="default_skill_design_title">Diseño UX/UI</string>
+    <string name="default_skill_design_description">Aprende diseño centrado en el usuario y herramientas como Figma.</string>
+    <string name="default_skill_design_students">3 estudiantes activos</string>
+    <string name="default_skill_design_price">$9/hora</string>
 </resources>

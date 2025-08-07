@@ -83,6 +83,7 @@
 
                 <!-- University -->
                 <TextView
+                    android:id="@+id/tv_university"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Universidad Nacional"
@@ -106,6 +107,7 @@
                         android:layout_marginEnd="4dp" />
 
                     <TextView
+                        android:id="@+id/tv_rating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="4.8 (23 reseñas)"
@@ -143,8 +145,10 @@
                     android:layout_marginBottom="16dp">
 
                     <TextView
+                        android:id="@+id/tv_price"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"                        android:text="$5/hora"
+                        android:layout_height="wrap_content"
+                        android:text="$5/hora"
                         android:textColor="@color/accent_color"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -155,6 +159,7 @@
                         android:layout_weight="1" />
 
                     <TextView
+                        android:id="@+id/tv_modalidad"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/modalidad_virtual_y_presencial"
@@ -183,6 +188,7 @@
                     android:layout_marginBottom="8dp" />
 
                 <TextView
+                    android:id="@+id/tv_incluye"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/explicaci_n_te_rica_n_ejercicios_pr_cticos_n_material_de_apoyo"
