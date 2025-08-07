@@ -62,7 +62,7 @@ class Busqueda : AppCompatActivity() {
 
     private fun setupNavigationButtons() {
         // Botón de perfil en el header
-        val btnPerfil = findViewById<TextView>(R.id.btn_perfil)
+        val btnPerfil = findViewById<ImageView>(R.id.btn_perfil)
         btnPerfil.setOnClickListener {
             startActivity(Intent(this, Perfil::class.java))
         }
