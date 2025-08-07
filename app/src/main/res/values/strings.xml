@@ -63,4 +63,24 @@
     <string name="cambios_guardados">¡Cambios guardados exitosamente!</string>
     <string name="error_actualizar_habilidad">Error al actualizar: %1$s</string>
     <string name="error_usuario_no_identificado">Error: No se pudo identificar al usuario</string>
+    <string name="perfil">Perfil</string>
+    <string name="search_glass">🔍</string>
+    <string name="hint_search">Buscar habilidades, instructores, categorías...</string>
+    <string name="loading_skills">Cargando habilidades...</string>
+    <string name="no_skills">No se encontraron resultados</string>
+    <string name="skills_try_again">Intenta con otros términos o filtros</string>
+    <string name="back">Volver</string>
+    <string name="profile_title">Mi perfil</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="register_title">Registro</string>
+    <string name="full_name">Nombre Completo</string>
+    <string name="name_placeholder">Juan Perez</string>
+    <string name="email">Email</string>
+    <string name="email_placeholder">juan@email.com</string>
+    <string name="univ_inst">Universidad/Institución</string>
+    <string name="univ_inst_placeholder">Universidad Nacional</string>
+    <string name="password">Contraseña</string>
+    <string name="password_placeholder">••••••••••••</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="create_account">Crear cuenta</string>
 </resources>
