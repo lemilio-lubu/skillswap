@@ -6,14 +6,14 @@ data class Skill(
     var description: String = "",
     var category: String = "",
     var price: Double = 0.0,
-    var modalidad: String = "", // Nuevo campo para modalidad
-    var incluye: String = "", // Nuevo campo para lo que incluye
+    var modalidad: String = "",
+    var incluye: String = "",
     var userId: String = "",
     var userName: String = "",
     var userAvatar: String = "",
     var rating: Double = 0.0,
     var reviewCount: Int = 0,
-    var sesionesCompletadas: Int = 0, // Nuevo campo para sesiones completadas
+    var sesionesCompletadas: Int = 0,
     var active: Boolean = true,
     var createdAt: Long = System.currentTimeMillis(),
     var updatedAt: Long = System.currentTimeMillis()
@@ -22,14 +22,6 @@ data class Skill(
 
     fun getFormattedPrice(): String {
         return "$${price.toInt()}/hora"
-    }
-
-    fun getFormattedRating(): String {
-        return if (reviewCount > 0) {
-            "${String.format("%.1f", rating)} ($reviewCount reseñas)"
-        } else {
-            "Sin reseñas"
-        }
     }
 
     fun generateId(): String {

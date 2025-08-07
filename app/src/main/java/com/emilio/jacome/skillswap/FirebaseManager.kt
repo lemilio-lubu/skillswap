@@ -28,38 +28,11 @@ object FirebaseManager {
         return auth.currentUser?.uid
     }
 
-    fun getCurrentUserEmail(): String? {
-        return auth.currentUser?.email
-    }
-
     fun getCurrentUserDisplayName(): String? {
         return auth.currentUser?.displayName
     }
 
-    fun isEmailVerified(): Boolean {
-        return auth.currentUser?.isEmailVerified ?: false
-    }
-
-    fun sendEmailVerification(callback: (Boolean, String?) -> Unit) {
-        auth.currentUser?.sendEmailVerification()
-            ?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    callback(true, null)
-                } else {
-                    callback(false, task.exception?.message)
-                }
-            }
-    }
-
     fun signOut() {
         auth.signOut()
-    }
-
-    fun addAuthStateListener(listener: FirebaseAuth.AuthStateListener) {
-        auth.addAuthStateListener(listener)
-    }
-
-    fun removeAuthStateListener(listener: FirebaseAuth.AuthStateListener) {
-        auth.removeAuthStateListener(listener)
     }
 }

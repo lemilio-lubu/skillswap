@@ -7,17 +7,11 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.SetOptions
 
-/**
- * SkillRepository - Handles skill data operations with Firestore
- */
 object SkillRepository {
     
     private const val SKILLS_COLLECTION = "skills"
     private const val RATINGS_COLLECTION = "ratings"
 
-    /**
-     * Create a new skill document in Firestore
-     */
     fun createSkill(skill: Skill): Task<Void> {
         val skillId = if (skill.id.isEmpty()) skill.generateId() else skill.id
         skill.id = skillId
@@ -27,20 +21,14 @@ object SkillRepository {
             .document(skillId)
             .set(skill)
     }
-    
-    /**
-     * Get skill document by ID
-     */
+
     fun getSkill(skillId: String): Task<DocumentSnapshot> {
         return FirebaseManager.firestore
             .collection(SKILLS_COLLECTION)
             .document(skillId)
             .get()
     }
-    
-    /**
-     * Get all skills for a specific user
-     */
+
     fun getUserSkills(userId: String): Task<QuerySnapshot> {
         return FirebaseManager.firestore
             .collection(SKILLS_COLLECTION)
@@ -48,32 +36,14 @@ object SkillRepository {
             .whereEqualTo("active", true)
             .get()
     }
-    
-    /**
-     * Get all active skills (for browsing) - filtering on client side
-     */
+
     fun getAllActiveSkills(): Task<QuerySnapshot> {
         return FirebaseManager.firestore
             .collection(SKILLS_COLLECTION)
             .whereEqualTo("active", true)
             .get()
     }
-    
-    /**
-     * Search skills by category - filtering on client side
-     */
-    fun getSkillsByCategory(category: String): Task<QuerySnapshot> {
-        return FirebaseManager.firestore
-            .collection(SKILLS_COLLECTION)
-            .whereEqualTo("category", category)
-            .whereEqualTo("active", true)
-            .orderBy("rating", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .get()
-    }
-    
-    /**
-     * Update skill document
-     */
+
     fun updateSkill(skillId: String, updates: Map<String, Any>): Task<Void> {
         val updatedData = updates.toMutableMap()
         updatedData["updatedAt"] = System.currentTimeMillis()
@@ -83,41 +53,11 @@ object SkillRepository {
             .document(skillId)
             .update(updatedData)
     }
-    
-    /**
-     * Delete skill (set as inactive)
-     */
+
     fun deleteSkill(skillId: String): Task<Void> {
         return updateSkill(skillId, mapOf("active" to false))
     }
-    
-    /**
-     * Search skills by title or description - filtering on client side
-     */
-    fun searchSkills(query: String): Task<QuerySnapshot> {
-        return FirebaseManager.firestore
-            .collection(SKILLS_COLLECTION)
-            .whereEqualTo("active", true)
-            .orderBy("title")
-            .startAt(query)
-            .endAt(query + "\uf8ff")
-            .get()
-    }
 
-    /**
-     * Get all active skills excluding those from a specific user
-     */
-    fun getActiveSkillsExcludingUser(excludeUserId: String): Task<QuerySnapshot> {
-        return FirebaseManager.firestore
-            .collection(SKILLS_COLLECTION)
-            .whereEqualTo("active", true)
-            .whereNotEqualTo("userId", excludeUserId)
-            .get()
-    }
-
-    /**
-     * Rate a skill by a user
-     */
     fun rateSkill(skillId: String, userId: String, rating: Float): Task<Void> {
         val db = FirebaseManager.firestore
         val ratingRef = db.collection(SKILLS_COLLECTION)
@@ -142,9 +82,6 @@ object SkillRepository {
             }
     }
 
-    /**
-     * Check if a user has already rated a skill
-     */
     fun getUserRating(skillId: String, userId: String): Task<DocumentSnapshot> {
         return FirebaseManager.firestore
             .collection(SKILLS_COLLECTION)
@@ -154,9 +91,6 @@ object SkillRepository {
             .get()
     }
 
-    /**
-     * Get all ratings for a skill
-     */
     fun getSkillRatings(skillId: String): Task<QuerySnapshot> {
         return FirebaseManager.firestore
             .collection(SKILLS_COLLECTION)
@@ -165,9 +99,6 @@ object SkillRepository {
             .get()
     }
 
-    /**
-     * Update skill rating average based on all ratings
-     */
     private fun updateSkillRatingAverage(skillId: String): Task<Void> {
         return getSkillRatings(skillId)
             .continueWithTask { task ->
@@ -199,9 +130,6 @@ object SkillRepository {
             }
     }
 
-    /**
-     * Get average rating for all skills of a tutor
-     */
     fun getTutorRatingAverage(tutorId: String): Task<Double> {
         return getUserSkills(tutorId)
             .continueWith { task ->
