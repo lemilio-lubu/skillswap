@@ -116,66 +116,73 @@
 
         </HorizontalScrollView>
 
-        <ScrollView
-            android:id="@+id/scroll_view_content"
+        <!-- FrameLayout que contiene tanto el ScrollView como los elementos de estado (loading y no results) -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:fillViewport="true"
             android:layout_marginTop="4dp">
 
-            <LinearLayout
-                android:id="@+id/skills_container"
+            <ScrollView
+                android:id="@+id/scroll_view_content"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:id="@+id/skills_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                </LinearLayout>
+
+            </ScrollView>
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminateTint="#6a6ce9"
+                android:visibility="gone"
+                android:layout_gravity="center" />
+
+            <LinearLayout
+                android:id="@+id/tv_no_resultados"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_results_icon"
+                    android:textSize="48sp"
+                    android:layout_marginBottom="16dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_results_found"
+                    android:textColor="#666666"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/try_other_terms"
+                    android:textColor="#999999"
+                    android:textSize="14sp"
+                    android:gravity="center" />
             </LinearLayout>
 
-        </ScrollView>
+        </FrameLayout>
 
-    </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminateTint="#6a6ce9"
-        android:visibility="gone"
-        android:layout_gravity="center" />
-
-    <LinearLayout
-        android:id="@+id/tv_no_resultados"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:visibility="gone"
-        android:layout_gravity="center">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_results_icon"
-            android:textSize="48sp"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_results_found"
-            android:textColor="#666666"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/try_other_terms"
-            android:textColor="#999999"
-            android:textSize="14sp"
-            android:gravity="center" />
     </LinearLayout>
 
 </LinearLayout>
