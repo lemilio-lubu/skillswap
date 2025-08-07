@@ -377,7 +377,7 @@ class Busqueda : AppCompatActivity() {
                 intent.putExtra("skill_title", skill?.title ?: "Matemáticas básicas")
                 intent.putExtra("skill_description", skill?.description ?: "Ayudo con álgebra, geometría y cálculo básico")
                 intent.putExtra("instructor_name", skill?.userName ?: "María García")
-                intent.putExtra("instructor_avatar", skill?.userAvatar ?: "MG")
+                intent.putExtra("instructor_avatar", skill?.let { generateSafeAvatar(it.userAvatar, it.userName) } ?: "MG")
                 intent.putExtra("skill_price", skill?.price?.toString() ?: "5.0")
                 intent.putExtra("skill_category", skill?.category ?: "Matemáticas")
                 intent.putExtra("skill_modalidad", skill?.modalidad ?: "Presencial")
@@ -393,7 +393,7 @@ class Busqueda : AppCompatActivity() {
                 intent.putExtra("skill_title", skill?.title ?: "Python para principiantes")
                 intent.putExtra("skill_description", skill?.description ?: "Enseño fundamentos de Python desde cero")
                 intent.putExtra("instructor_name", skill?.userName ?: "Carlos López")
-                intent.putExtra("instructor_avatar", skill?.userAvatar ?: "CL")
+                intent.putExtra("instructor_avatar", skill?.let { generateSafeAvatar(it.userAvatar, it.userName) } ?: "CL")
                 intent.putExtra("skill_price", skill?.price?.toString() ?: "8.0")
                 intent.putExtra("skill_category", skill?.category ?: "Programación")
                 intent.putExtra("skill_modalidad", skill?.modalidad ?: "Virtual")
@@ -409,7 +409,7 @@ class Busqueda : AppCompatActivity() {
                 intent.putExtra("skill_title", skill?.title ?: "Inglés conversacional")
                 intent.putExtra("skill_description", skill?.description ?: "Práctica de conversación en inglés")
                 intent.putExtra("instructor_name", skill?.userName ?: "Ana Martínez")
-                intent.putExtra("instructor_avatar", skill?.userAvatar ?: "AM")
+                intent.putExtra("instructor_avatar", skill?.let { generateSafeAvatar(it.userAvatar, it.userName) } ?: "AM")
                 intent.putExtra("skill_price", skill?.price?.toString() ?: "6.0")
                 intent.putExtra("skill_category", skill?.category ?: "Idiomas")
                 intent.putExtra("skill_modalidad", skill?.modalidad ?: "Híbrida")
@@ -488,6 +488,20 @@ class Busqueda : AppCompatActivity() {
         cardMatematicas?.visibility = if (filteredTitles.contains("matemáticas básicas")) View.VISIBLE else View.GONE
         cardPython?.visibility = if (filteredTitles.contains("python para principiantes")) View.VISIBLE else View.GONE
         cardIngles?.visibility = if (filteredTitles.contains("inglés conversacional")) View.VISIBLE else View.GONE
+    }
+
+    private fun generateSafeAvatar(userAvatar: String, userName: String): String {
+        return if (userAvatar.isNotEmpty()) {
+            userAvatar
+        } else {
+            // Generar iniciales de forma segura
+            val nameParts = userName.trim().split(" ").filter { it.isNotEmpty() }
+            if (nameParts.isNotEmpty()) {
+                nameParts.map { it.first().uppercaseChar() }.joinToString("")
+            } else {
+                "U" // Fallback si no hay nombre válido
+            }
+        }
     }
 
     private fun createSkillCard(skill: Skill): LinearLayout {
@@ -573,7 +587,7 @@ class Busqueda : AppCompatActivity() {
             intent.putExtra("skill_title", skill.title)
             intent.putExtra("skill_description", skill.description)
             intent.putExtra("instructor_name", skill.userName)
-            intent.putExtra("instructor_avatar", if (skill.userAvatar.isNotEmpty()) skill.userAvatar else skill.userName.split(" ").map { it.first() }.joinToString(""))
+            intent.putExtra("instructor_avatar", generateSafeAvatar(skill.userAvatar, skill.userName))
             intent.putExtra("skill_price", skill.price.toString())
             intent.putExtra("skill_category", skill.category)
             intent.putExtra("skill_modalidad", skill.modalidad)
