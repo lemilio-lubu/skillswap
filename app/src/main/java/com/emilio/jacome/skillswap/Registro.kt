@@ -23,10 +23,8 @@ class Registro : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pantalla_de_registro)
         
-        // Enable back button in action bar
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         
-        // Handle back button press
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 finish()
@@ -64,26 +62,21 @@ class Registro : AppCompatActivity() {
         val password = etPassword.text.toString().trim()
         val confirmPassword = etConfirmPassword.text.toString().trim()
         
-        // Validate input
         if (!validateInput(nombre, email, universidad, password, confirmPassword)) {
             return
         }
         
-        // Disable button to prevent multiple clicks
         btnCrearCuenta.isEnabled = false
         btnCrearCuenta.text = "Creando cuenta..."
         
-        // Create user with Firebase Auth
         FirebaseManager.auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Registration successful, create user document
                     val firebaseUser = task.result?.user
                     if (firebaseUser != null) {
                         createUserDocument(firebaseUser.uid, nombre, email, universidad)
                     }
                 } else {
-                    // Registration failed
                     handleRegistrationError(task.exception)
                     resetButton()
                 }
@@ -160,24 +153,20 @@ class Registro : AppCompatActivity() {
             updatedAt = System.currentTimeMillis()
         )
         
-        // Verify user data is valid before saving
         if (!user.isValid()) {
             showError("Error: Datos de usuario inválidos")
             resetButton()
             return
         }
         
-        // Try to create the document
         FirebaseManager.firestore.collection("users")
             .document(uid)
             .set(user)
             .addOnSuccessListener {
-                // Document created successfully
                 showSuccess("¡Perfil creado exitosamente!")
                 navigateToMainApp()
             }
             .addOnFailureListener { exception ->
-                // Detailed error handling
                 val errorMsg = when {
                     exception.message?.contains("PERMISSION_DENIED") == true -> 
                         "Error de permisos en Firestore. Verifica las reglas de seguridad."
@@ -189,7 +178,6 @@ class Registro : AppCompatActivity() {
                 }
                 showError(errorMsg)
                 
-                // Delete the Firebase Auth user if document creation fails
                 FirebaseManager.auth.currentUser?.delete()
                     ?.addOnCompleteListener {
                         resetButton()

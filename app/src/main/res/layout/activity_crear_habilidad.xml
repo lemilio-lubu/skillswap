@@ -30,7 +30,6 @@
 
     </LinearLayout>
 
-    <!-- Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -44,7 +43,6 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-            <!-- Título de la habilidad -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -64,7 +62,6 @@
                 android:textColor="@color/text_primary"
                 android:layout_marginBottom="24dp" />
 
-            <!-- Categoría -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -82,7 +79,6 @@
                 android:background="@drawable/rounded_spinner"
                 android:layout_marginBottom="24dp" />
 
-            <!-- Descripción -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -104,7 +100,6 @@
                 android:inputType="textMultiLine"
                 android:layout_marginBottom="24dp" />
 
-            <!-- Precio por hora -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -125,7 +120,6 @@
                 android:inputType="numberDecimal"
                 android:layout_marginBottom="24dp" />
 
-            <!-- Modalidad -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

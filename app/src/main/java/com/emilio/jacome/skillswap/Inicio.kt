@@ -52,27 +52,22 @@ class Inicio : AppCompatActivity() {
         val email = etEmail.text.toString().trim()
         val password = etPassword.text.toString().trim()
         
-        // Validate input
         if (!validateInput(email, password)) {
             return
         }
         
-        // Disable button to prevent multiple clicks
         btnLogin.isEnabled = false
         btnLogin.text = getString(R.string.btn_login_progress)
 
-        // Login with Firebase Auth
         AuthenticationHelper.login(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Login successful
                     val user = task.result?.user
                     if (user != null) {
                         showSuccess(getString(R.string.welcome_message))
                         navigateToMainApp()
                     }
                 } else {
-                    // Login failed
                     val errorMessage = AuthenticationHelper.getAuthErrorMessage(task.exception)
                     showError(errorMessage)
                     resetButton()

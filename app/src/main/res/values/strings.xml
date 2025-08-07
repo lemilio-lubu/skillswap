@@ -63,4 +63,41 @@
     <string name="cambios_guardados">¡Cambios guardados exitosamente!</string>
     <string name="error_actualizar_habilidad">Error al actualizar: %1$s</string>
     <string name="error_usuario_no_identificado">Error: No se pudo identificar al usuario</string>
+
+    <!-- Pantalla de búsqueda -->
+    <string name="profile_description">Perfil</string>
+    <string name="search_hint">Buscar habilidades, instructores, categorías...</string>
+    <string name="loading_skills">Cargando habilidades...</string>
+    <string name="no_results_found">No se encontraron resultados</string>
+    <string name="try_other_terms">Intenta con otros términos o filtros</string>
+    <string name="search_icon_emoji">🔍</string>
+    <string name="no_results_icon">🔍</string>
+    <string name="error_loading_skills">Error al cargar habilidades</string>
+    <string name="category_all">Todas</string>
+    <string name="results_count_zero">No se encontraron resultados</string>
+    <string name="results_count_one">1 resultado encontrado</string>
+    <string name="results_count_many">%1$d resultados encontrados</string>
+    <string name="skill_by_instructor">Por %1$s</string>
+    <string name="default_user">Usuario</string>
+    <string name="default_user_initial">U</string>
+
+    <!-- Pantalla de perfil -->
+    <string name="my_profile">Mi perfil</string>
+    <string name="back_description">Volver</string>
+    <string name="logout_description">Cerrar sesión</string>
+    <string name="my_skills">Mis habilidades</string>
+    <string name="university_not_specified">Universidad no especificada</string>
+    <string name="add_first_skill">Agregar mi primera habilidad</string>
+    <string name="add_new_skill">Agregar nueva habilidad</string>
+    <string name="loading_text">Cargando...</string>
+    <string name="user_not_authenticated">Error: Usuario no autenticado</string>
+    <string name="profile_not_found">Perfil de usuario no encontrado</string>
+    <string name="error_loading_profile">Error al cargar perfil: %1$s</string>
+    <string name="error_loading_skills_profile">Error al cargar habilidades: %1$s</string>
+    <string name="logout_confirmation_title">Cerrar sesión</string>
+    <string name="logout_confirmation_message">¿Estás seguro de que deseas cerrar sesión?</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="default_students">0 estudiantes</string>
+    <string name="star_emoji">⭐</string>
 </resources>

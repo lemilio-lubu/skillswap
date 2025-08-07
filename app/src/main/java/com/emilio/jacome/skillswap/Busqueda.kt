@@ -13,11 +13,9 @@ import com.emilio.jacome.skillswap.utils.SkillRepository
 import com.emilio.jacome.skillswap.utils.UserRepository
 import com.emilio.jacome.skillswap.model.Skill
 import com.emilio.jacome.skillswap.model.User
-import com.google.firebase.firestore.QuerySnapshot
 
 class Busqueda : AppCompatActivity() {
 
-    // Views principales
     private lateinit var etBuscar: EditText
     private lateinit var scrollViewContent: ScrollView
     private lateinit var skillsContainer: LinearLayout
@@ -25,10 +23,8 @@ class Busqueda : AppCompatActivity() {
     private lateinit var tvNoResultados: LinearLayout
     private lateinit var tvResultadosContador: TextView
 
-    // Contenedor de categorías
     private lateinit var categoriesContainer: LinearLayout
     
-    // Data
     private var allSkills = mutableListOf<Skill>()
     private var filteredSkills = mutableListOf<Skill>()
     private var allUsers = mutableListOf<User>()
@@ -47,7 +43,6 @@ class Busqueda : AppCompatActivity() {
     }
 
     private fun initViews() {
-        // Views de búsqueda
         etBuscar = findViewById(R.id.et_buscar)
         scrollViewContent = findViewById(R.id.scroll_view_content)
         skillsContainer = findViewById(R.id.skills_container)
@@ -55,10 +50,8 @@ class Busqueda : AppCompatActivity() {
         tvNoResultados = findViewById(R.id.tv_no_resultados)
         tvResultadosContador = findViewById(R.id.tv_resultados_contador)
 
-        // Contenedor de categorías
         categoriesContainer = findViewById(R.id.categories_container)
         
-        // Inicializar layoutSugerencias (crear dinámicamente)
         layoutSugerencias = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             visibility = View.GONE
@@ -66,7 +59,6 @@ class Busqueda : AppCompatActivity() {
     }
 
     private fun setupNavigationButtons() {
-        // Botón de perfil en el header
         val btnPerfil = findViewById<ImageView>(R.id.btn_perfil)
         btnPerfil.setOnClickListener {
             startActivity(Intent(this, Perfil::class.java))
@@ -91,15 +83,14 @@ class Busqueda : AppCompatActivity() {
 
     private fun setupCategoryFilters() {
         // Crear filtros dinámicamente basados en Constants
-        val allCategories = listOf("Todas") + Constants.Categories.LIST
-        
+        val allCategories = listOf(getString(R.string.category_all)) + Constants.Categories.LIST
+
         allCategories.forEach { category ->
             val filterView = createCategoryFilterView(category)
             categoriesContainer.addView(filterView)
         }
 
-        // Seleccionar "Todas" por defecto
-        selectedCategory = "Todas"
+        selectedCategory = getString(R.string.category_all)
         updateCategoryFilterSelection()
     }
 
@@ -129,7 +120,6 @@ class Busqueda : AppCompatActivity() {
     }
 
     private fun updateCategoryFilterSelection() {
-        // Actualizar todos los filtros de categoría
         for (i in 0 until categoriesContainer.childCount) {
             val filterView = categoriesContainer.getChildAt(i) as TextView
             val isSelected = filterView.text.toString() == selectedCategory
@@ -150,7 +140,6 @@ class Busqueda : AppCompatActivity() {
         if (normalizedQuery.length >= 2) {
             performSmartSearch(normalizedQuery)
         } else {
-            // Para consultas muy cortas, mostrar todas las habilidades con filtro de categoría
             applyAllFilters()
         }
     }
@@ -235,7 +224,7 @@ class Busqueda : AppCompatActivity() {
 
         filteredSkills.addAll(allSkills.filter { skill ->
             val isNotCurrentUser = skill.userId != FirebaseManager.getCurrentUserId()
-            val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
+            val matchesCategory = selectedCategory == getString(R.string.category_all) || skill.category == selectedCategory
             matchesCategory
         })
 
@@ -359,7 +348,7 @@ class Busqueda : AppCompatActivity() {
             }
             .addOnFailureListener {
                 progressBar.visibility = View.GONE
-                tvResultadosContador.text = "Error al cargar habilidades"
+                tvResultadosContador.text = getString(R.string.error_loading_skills)
             }
     }
 
@@ -401,7 +390,7 @@ class Busqueda : AppCompatActivity() {
             userMap[skill.userId]?.let { user ->
                 // Si el skill no tiene userName o está vacío, usar el del usuario
                 if (skill.userName.isEmpty()) {
-                    skill.userName = user.name.ifEmpty { "Usuario" }
+                    skill.userName = user.name.ifEmpty { getString(R.string.default_user) }
                 }
                 // Si el skill no tiene userAvatar, generar iniciales
                 if (skill.userAvatar.isEmpty()) {
@@ -410,7 +399,7 @@ class Busqueda : AppCompatActivity() {
                         .take(2)
                         .joinToString("")
                         .uppercase()
-                        .ifEmpty { "U" }
+                        .ifEmpty { getString(R.string.default_user_initial) }
                 }
             }
         }
@@ -428,9 +417,9 @@ class Busqueda : AppCompatActivity() {
 
         val count = filteredSkills.size
         tvResultadosContador.text = when {
-            count == 0 -> "No se encontraron resultados"
-            count == 1 -> "1 resultado encontrado"
-            else -> "$count resultados encontrados"
+            count == 0 -> getString(R.string.results_count_zero)
+            count == 1 -> getString(R.string.results_count_one)
+            else -> getString(R.string.results_count_many, count)
         }
 
         if (count == 0) {
@@ -513,7 +502,7 @@ class Busqueda : AppCompatActivity() {
         }
         
         val instructorView = TextView(this).apply {
-            text = "Por ${skill.userName}"
+            text = getString(R.string.skill_by_instructor, skill.userName)
             setTextColor(getColor(R.color.text_secondary))
             textSize = 13f
             setTypeface(null, android.graphics.Typeface.BOLD)

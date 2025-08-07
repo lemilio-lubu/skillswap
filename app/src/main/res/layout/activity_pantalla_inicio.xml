@@ -9,8 +9,6 @@
     android:padding="32dp"
     tools:context=".Inicio">
 
-    <!-- Logo y título -->
-
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"

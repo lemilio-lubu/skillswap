@@ -1,8 +1,5 @@
 package com.emilio.jacome.skillswap.model
 
-/**
- * Skill data model for Firestore
- */
 data class Skill(
     var id: String = "",
     var title: String = "",
@@ -20,19 +17,12 @@ data class Skill(
     var createdAt: Long = System.currentTimeMillis(),
     var updatedAt: Long = System.currentTimeMillis()
 ) {
-    // No-argument constructor required by Firestore
     constructor() : this("", "", "", "", 0.0, "", "", "", "", 0.0, 0, 0, true, 0L, 0L)
 
-    /**
-     * Get formatted price string
-     */
     fun getFormattedPrice(): String {
         return "$${price.toInt()}/hora"
     }
-    
-    /**
-     * Get formatted rating string
-     */
+
     fun getFormattedRating(): String {
         return if (reviewCount > 0) {
             "${String.format("%.1f", rating)} ($reviewCount reseñas)"
@@ -40,10 +30,7 @@ data class Skill(
             "Sin reseñas"
         }
     }
-    
-    /**
-     * Generate skill ID from title and user ID
-     */
+
     fun generateId(): String {
         return "${userId}_${title.replace(" ", "_").lowercase()}"
     }

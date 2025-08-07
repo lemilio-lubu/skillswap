@@ -25,7 +25,6 @@ class EditarHabilidad : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_editar_habilidad)
         
-        // Referencias a las vistas
         val btnBack = findViewById<ImageView>(R.id.btn_back)
         val btnDelete = findViewById<ImageView>(R.id.btn_delete)
         btnGuardar = findViewById<Button>(R.id.btn_guardar)
@@ -37,17 +36,14 @@ class EditarHabilidad : AppCompatActivity() {
         val tvRating = findViewById<TextView>(R.id.tv_rating)
         val tvSesionesCompletadas = findViewById<TextView>(R.id.tv_sesiones_completadas)
 
-        // Configurar spinner de categorías
         val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Categories.LIST)
         adapterCategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCategoria.adapter = adapterCategorias
 
-        // Configurar spinner de modalidad
         val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Modalities.LIST)
         adapterModalidad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerModalidad.adapter = adapterModalidad
 
-        // Obtener datos del intent y llenar los campos
         skillId = intent.getStringExtra("skill_id") ?: ""
         val skillTitle = intent.getStringExtra("skill_title") ?: ""
         val skillDescription = intent.getStringExtra("skill_description") ?: ""
@@ -62,19 +58,16 @@ class EditarHabilidad : AppCompatActivity() {
         etDescripcion.setText(skillDescription)
         etPrecio.setText(skillPrice)
         
-        // Seleccionar la categoría actual en el spinner
         val categoryPosition = Constants.Categories.LIST.indexOf(skillCategory)
         if (categoryPosition >= 0) {
             spinnerCategoria.setSelection(categoryPosition)
         }
         
-        // Seleccionar la modalidad actual en el spinner
         val modalityPosition = Constants.Modalities.LIST.indexOf(skillModalidad)
         if (modalityPosition >= 0) {
             spinnerModalidad.setSelection(modalityPosition)
         }
 
-        // Actualizar información de rating y sesiones completadas
         if (skillReviewCount > 0) {
             tvRating.text = getString(R.string.rating_con_reviews, skillRating, skillReviewCount)
         } else {
@@ -83,12 +76,10 @@ class EditarHabilidad : AppCompatActivity() {
 
         tvSesionesCompletadas.text = getString(R.string.sesiones_completadas, skillSesionesCompletadas)
 
-        // Botón de regreso
         btnBack.setOnClickListener {
             finish()
         }
         
-        // Botón eliminar habilidad
         btnDelete.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.confirmar_eliminar_titulo))
@@ -100,7 +91,6 @@ class EditarHabilidad : AppCompatActivity() {
                 .show()
         }
         
-        // Botón guardar cambios
         btnGuardar.setOnClickListener {
             val titulo = etTitulo.text.toString().trim()
             val descripcion = etDescripcion.text.toString().trim()

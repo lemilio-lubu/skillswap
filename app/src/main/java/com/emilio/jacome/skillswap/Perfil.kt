@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.emilio.jacome.skillswap.model.Skill
@@ -40,19 +39,14 @@ class Perfil : AppCompatActivity() {
     }
     
     private fun initializeViews() {
-        val btnBack = findViewById<ImageView>(R.id.btn_back)
-        val btnConfiguracion = findViewById<ImageView>(R.id.btn_configuracion)
         btnAgregarHabilidad = findViewById<Button>(R.id.btn_agregar_habilidad)
-        
         avatar = findViewById(R.id.avatar)
         nombreUsuario = findViewById(R.id.nombre_usuario)
         universidad = findViewById(R.id.universidad)
         calificacion = findViewById(R.id.calificacion)
         
-        // For dynamic skills, we'll use the main container for now
         skillsContainer = findViewById(R.id.main)
         
-        // Hide content initially to prevent data flicker
         hideProfileContent()
     }
     
@@ -65,7 +59,6 @@ class Perfil : AppCompatActivity() {
         }
         
         btnLogout.setOnClickListener {
-            // Direct logout prompt with clear messaging
             showLogoutConfirmation()
         }
         
@@ -78,14 +71,12 @@ class Perfil : AppCompatActivity() {
         val userId = FirebaseManager.getCurrentUserId()
         
         if (userId == null) {
-            showError("Error: Usuario no autenticado")
+            showError(getString(R.string.user_not_authenticated))
             return
         }
         
-        // Show loading state
         showLoadingState(true)
         
-        // Load user profile data
         UserRepository.getUser(userId)
             .addOnSuccessListener { document ->
                 if (document.exists()) {
@@ -93,18 +84,18 @@ class Perfil : AppCompatActivity() {
                     currentUser?.let { user ->
                         updateUserUI(user)
                         loadUserSkills(userId)
-                        showProfileContent() // Show content when data loads
+                        showProfileContent()
                     }
                 } else {
-                    showError("Perfil de usuario no encontrado")
+                    showError(getString(R.string.profile_not_found))
                     showLoadingState(false)
-                    showProfileContent() // Show content even on error
+                    showProfileContent()
                 }
             }
             .addOnFailureListener { exception ->
-                showError("Error al cargar perfil: ${exception.message}")
+                showError(getString(R.string.error_loading_profile, exception.message))
                 showLoadingState(false)
-                showProfileContent() // Show content even on error
+                showProfileContent()
             }
     }
     
@@ -117,23 +108,19 @@ class Perfil : AppCompatActivity() {
                 showLoadingState(false)
             }
             .addOnFailureListener { exception ->
-                showError("Error al cargar habilidades: ${exception.message}")
+                showError(getString(R.string.error_loading_skills_profile, exception.message))
                 showLoadingState(false)
             }
     }
     
     private fun updateUserUI(user: User) {
-        // Update avatar with user initials
         val initials = UIHelper.getUserInitials(user.name)
         avatar.text = initials
         
-        // Update user name
         nombreUsuario.text = user.getDisplayName()
         
-        // Update university
-        universidad.text = if (user.university.isNotEmpty()) user.university else "Universidad no especificada"
-        
-        // Update rating (will be calculated from actual skills and reviews later)
+        universidad.text = if (user.university.isNotEmpty()) user.university else getString(R.string.university_not_specified)
+
         val totalReviews = userSkills.sumOf { it.reviewCount }
         val averageRating = if (totalReviews > 0) {
             userSkills.sumOf { it.rating * it.reviewCount } / totalReviews
@@ -148,17 +135,14 @@ class Perfil : AppCompatActivity() {
         val cardJavascript = findViewById<LinearLayout>(R.id.card_javascript)
         val cardDiseno = findViewById<LinearLayout>(R.id.card_diseno)
         
-        // Hide cards initially
         cardJavascript?.visibility = View.GONE
         cardDiseno?.visibility = View.GONE
         
-        // If no skills, show the "add first skill" state
         if (skills.isEmpty()) {
-            btnAgregarHabilidad.text = "Agregar mi primera habilidad"
+            btnAgregarHabilidad.text = getString(R.string.add_first_skill)
             return
         }
         
-        // Show cards based on user's actual skills
         skills.forEachIndexed { index, skill ->
             when (index) {
                 0 -> {
@@ -182,29 +166,25 @@ class Perfil : AppCompatActivity() {
             }
         }
         
-        // Update button text based on skills count
         val buttonText = if (skills.isEmpty()) {
-            "Agregar mi primera habilidad"
+            getString(R.string.add_first_skill)
         } else {
-            "Agregar nueva habilidad"
+            getString(R.string.add_new_skill)
         }
         btnAgregarHabilidad.text = buttonText
     }
     
     private fun updateSkillCard(card: LinearLayout, skill: Skill) {
-        // Find TextViews within the card and update them by ID
         val titleView = card.findViewById<TextView>(R.id.titulo_javascript) ?: card.findViewById<TextView>(R.id.titulo_diseno)
         val descriptionView = card.findViewById<TextView>(R.id.descripcion_javascript) ?: card.findViewById<TextView>(R.id.descripcion_diseno)
         val priceView = card.findViewById<TextView>(R.id.precio_javascript) ?: card.findViewById<TextView>(R.id.precio_diseno)
         
-        // Update the views with skill data
         titleView?.text = skill.title
         descriptionView?.text = skill.description
         priceView?.text = skill.getFormattedPrice()
         
-        // Update students count if available
         val studentsView = card.findViewById<TextView>(R.id.estudiantes_javascript) ?: card.findViewById<TextView>(R.id.estudiantes_diseno)
-        studentsView?.text = "0 estudiantes" // Default for now
+        studentsView?.text = getString(R.string.default_students)
     }
     
     private fun editSkill(skill: Skill) {
@@ -224,24 +204,21 @@ class Perfil : AppCompatActivity() {
     private fun showLoadingState(isLoading: Boolean) {
         if (isLoading) {
             hideProfileContent()
-            // Show loading indicators
-            nombreUsuario.text = "Cargando..."
+            nombreUsuario.text = getString(R.string.loading_text)
             nombreUsuario.visibility = View.VISIBLE
-            universidad.text = "Cargando..."
+            universidad.text = getString(R.string.loading_text)
             universidad.visibility = View.VISIBLE
-            calificacion.text = "Cargando..."
+            calificacion.text = getString(R.string.loading_text)
             calificacion.visibility = View.VISIBLE
         }
     }
     
     private fun hideProfileContent() {
-        // Hide profile elements to prevent flicker
         avatar.visibility = View.INVISIBLE
         nombreUsuario.visibility = View.INVISIBLE
         universidad.visibility = View.INVISIBLE
         calificacion.visibility = View.INVISIBLE
         
-        // Hide skill cards
         findViewById<LinearLayout>(R.id.card_javascript)?.visibility = View.GONE
         findViewById<LinearLayout>(R.id.card_diseno)?.visibility = View.GONE
         
@@ -249,7 +226,6 @@ class Perfil : AppCompatActivity() {
     }
     
     private fun showProfileContent() {
-        // Show all profile elements
         avatar.visibility = View.VISIBLE
         nombreUsuario.visibility = View.VISIBLE
         universidad.visibility = View.VISIBLE
@@ -263,19 +239,18 @@ class Perfil : AppCompatActivity() {
     
     private fun showLogoutConfirmation() {
         AlertDialog.Builder(this)
-            .setTitle("Cerrar sesión")
-            .setMessage("¿Estás seguro de que deseas cerrar sesión?")
-            .setPositiveButton("Sí") { _, _ ->
+            .setTitle(getString(R.string.logout_confirmation_title))
+            .setMessage(getString(R.string.logout_confirmation_message))
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 logout()
             }
-            .setNegativeButton("No", null)
+            .setNegativeButton(getString(R.string.no), null)
             .show()
     }
     
     private fun logout() {
         AuthenticationHelper.logout()
         
-        // Navigate to login screen and clear the back stack
         val intent = Intent(this, Inicio::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
@@ -284,7 +259,6 @@ class Perfil : AppCompatActivity() {
     
     override fun onResume() {
         super.onResume()
-        // Reload data when returning from other activities
         loadUserData()
     }
 }

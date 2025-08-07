@@ -20,7 +20,6 @@ class CrearHabilidad : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crear_habilidad)
         
-        // Referencias a las vistas
         val btnBack = findViewById<ImageView>(R.id.btn_back)
         btnAgregar = findViewById<Button>(R.id.btn_agregar) // Ahora asignamos a la propiedad de la clase
         val etTitulo = findViewById<EditText>(R.id.et_titulo)
@@ -29,22 +28,18 @@ class CrearHabilidad : AppCompatActivity() {
         val spinnerCategoria = findViewById<Spinner>(R.id.spinner_categoria)
         val spinnerModalidad = findViewById<Spinner>(R.id.spinner_modalidad)
 
-        // Configurar spinner de categorías
         val adapterCategorias = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Categories.LIST)
         adapterCategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCategoria.adapter = adapterCategorias
 
-        // Configurar spinner de modalidad
         val adapterModalidad = ArrayAdapter(this, android.R.layout.simple_spinner_item, Constants.Modalities.LIST_WITH_DEFAULT)
         adapterModalidad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerModalidad.adapter = adapterModalidad
 
-        // Botón de regreso
         btnBack.setOnClickListener {
             finish()
         }
         
-        // Botón agregar habilidad
         btnAgregar.setOnClickListener {
             val titulo = etTitulo.text.toString().trim()
             val descripcion = etDescripcion.text.toString().trim()
@@ -79,7 +74,6 @@ class CrearHabilidad : AppCompatActivity() {
     }
 
     private fun crearNuevaHabilidad(titulo: String, descripcion: String, precio: Double, categoria: String, modalidad: String) {
-        // Obtener ID del usuario actual
         val userId = FirebaseManager.getCurrentUserId()
         val userName = FirebaseManager.getCurrentUserDisplayName() ?: "Usuario"
 
@@ -88,7 +82,6 @@ class CrearHabilidad : AppCompatActivity() {
             return
         }
 
-        // Crear objeto Skill
         val skill = Skill(
             title = titulo,
             description = descripcion,
