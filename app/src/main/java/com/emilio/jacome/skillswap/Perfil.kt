@@ -52,7 +52,7 @@ class Perfil : AppCompatActivity() {
     
     private fun setupClickListeners() {
         val btnBack = findViewById<ImageView>(R.id.btn_back)
-        val btnLogout = findViewById<ImageView>(R.id.btn_configuracion) // Logout button with logout icon
+        val btnLogout = findViewById<ImageView>(R.id.btn_configuracion)
         
         btnBack.setOnClickListener {
             finish()
@@ -82,9 +82,8 @@ class Perfil : AppCompatActivity() {
                 if (document.exists()) {
                     currentUser = document.toObject(User::class.java)
                     currentUser?.let { user ->
-                        updateUserUI(user)
+                        updateBasicUserInfo(user)
                         loadUserSkills(userId)
-                        showProfileContent()
                     }
                 } else {
                     showError(getString(R.string.profile_not_found))
@@ -104,16 +103,20 @@ class Perfil : AppCompatActivity() {
             .addOnSuccessListener { querySnapshot ->
                 userSkills = querySnapshot.toObjects(Skill::class.java)
                     .sortedByDescending { it.createdAt }
+
+                updateUserRating()
                 updateSkillsUI(userSkills)
                 showLoadingState(false)
+                showProfileContent()
             }
             .addOnFailureListener { exception ->
                 showError(getString(R.string.error_loading_skills_profile, exception.message))
                 showLoadingState(false)
+                showProfileContent()
             }
     }
     
-    private fun updateUserUI(user: User) {
+    private fun updateBasicUserInfo(user: User) {
         val initials = UIHelper.getUserInitials(user.name)
         avatar.text = initials
         
@@ -121,14 +124,46 @@ class Perfil : AppCompatActivity() {
         
         universidad.text = if (user.university.isNotEmpty()) user.university else getString(R.string.university_not_specified)
 
-        val totalReviews = userSkills.sumOf { it.reviewCount }
-        val averageRating = if (totalReviews > 0) {
-            userSkills.sumOf { it.rating * it.reviewCount } / totalReviews
-        } else {
-            0.0
+        calificacion.text = getString(R.string.loading_text)
+    }
+
+    private fun updateUserRating() {
+        if (currentUser == null || userSkills.isEmpty()) {
+            calificacion.text = getString(R.string.rating_sin_reviews).substring(2)
         }
-        val ratingText = UIHelper.formatRating(averageRating, totalReviews)
-        calificacion.text = ratingText
+
+        val userId = currentUser?.uid ?: FirebaseManager.getCurrentUserId() ?: return
+
+        var totalRating = 0.0
+        var ratedSkillsCount = 0
+
+        userSkills.forEach { skill ->
+            if (skill.reviewCount > 0) {
+                totalRating += skill.rating
+                ratedSkillsCount++
+            }
+        }
+
+        if (ratedSkillsCount > 0) {
+            val averageRating = totalRating / ratedSkillsCount
+            val totalReviews = userSkills.sumOf { it.reviewCount }
+            calificacion.text = UIHelper.formatRating(averageRating, totalReviews).substring(2)
+        } else {
+            calificacion.text = getString(R.string.rating_sin_reviews).substring(2)
+        }
+
+        SkillRepository.getTutorRatingAverage(userId)
+            .addOnSuccessListener { averageRating ->
+                if (averageRating > 0) {
+                    val totalReviews = userSkills.sumOf { it.reviewCount }
+                    calificacion.text = String.format("%.1f (%d reseñas)", averageRating, totalReviews)
+                } else {
+                    calificacion.text = "Sin reseñas"
+                }
+            }
+            .addOnFailureListener {
+
+            }
     }
     
     private fun updateSkillsUI(skills: List<Skill>) {

@@ -67,6 +67,16 @@
     <string name="error_actualizar_habilidad">Error al actualizar: %1$s</string>
     <string name="error_usuario_no_identificado">Error: No se pudo identificar al usuario</string>
 
+    <!-- Sistema de Calificaciones -->
+    <string name="calificar_habilidad">Calificar Habilidad</string>
+    <string name="modificar_calificacion">Modificar Calificación</string>
+    <string name="tu_calificacion">Tu calificación:</string>
+    <string name="enviar_calificacion">Enviar</string>
+    <string name="calificacion_enviada">¡Calificación enviada exitosamente!</string>
+    <string name="error_calificacion_vacia">Por favor selecciona una calificación</string>
+    <string name="error_enviar_calificacion">Error al enviar calificación: %1$s</string>
+    <string name="error_obtener_habilidad">Error al obtener información de la habilidad</string>
+
     <!-- Pantalla de búsqueda -->
     <string name="profile_description">Perfil</string>
     <string name="search_hint">Buscar habilidades, instructores, categorías...</string>

@@ -200,9 +200,23 @@
             <Button
                 android:id="@+id/btn_contactar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"                android:text="@string/contactar_tutor"
+                android:layout_height="wrap_content"
+                android:text="@string/contactar_tutor"
                 android:textColor="@android:color/white"
                 android:backgroundTint="@color/accent_color"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Rate Button -->
+            <Button
+                android:id="@+id/btn_calificar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/calificar_habilidad"
+                android:textColor="@color/accent_color"
+                android:backgroundTint="#F3F4F6"
                 android:padding="16dp"
                 android:textSize="16sp"
                 android:textStyle="bold" />
