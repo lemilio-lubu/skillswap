@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
-import com.emilio.jacome.skillswap.model.Skill
 import com.emilio.jacome.skillswap.utils.Constants
 import com.emilio.jacome.skillswap.utils.SkillRepository
 
@@ -20,7 +19,7 @@ class Busqueda : AppCompatActivity() {
     private lateinit var scrollViewContent: ScrollView
     private lateinit var skillsContainer: LinearLayout
     private lateinit var progressBar: ProgressBar
-    private lateinit var tvNoResultados: TextView
+    private lateinit var tvNoResultados: LinearLayout
     private lateinit var tvResultadosContador: TextView
 
     // Filtros de categoría
@@ -35,9 +34,21 @@ class Busqueda : AppCompatActivity() {
     private lateinit var layoutFiltrosAvanzados: LinearLayout
     private var filtrosAvanzadosVisible = false
 
+    // Data classes simples para usar internamente
+    data class SimpleSkill(
+        val id: String,
+        val title: String,
+        val description: String,
+        val category: String,
+        val price: Double,
+        val modalidad: String,
+        val userId: String,
+        val userName: String
+    )
+
     // Data
-    private var allSkills = mutableListOf<Skill>()
-    private var filteredSkills = mutableListOf<Skill>()
+    private var allSkills = mutableListOf<SimpleSkill>()
+    private var filteredSkills = mutableListOf<SimpleSkill>()
     private var selectedCategory = "Todas"
     private var selectedPriceRange = "Todos los precios"
     private var selectedModality = "Todas las modalidades"
@@ -309,9 +320,9 @@ class Busqueda : AppCompatActivity() {
     private fun loadSkills() {
         progressBar.visibility = View.VISIBLE
 
-        // Datos de ejemplo mientras no tengas el repository
+        // Datos de ejemplo usando la clase simple
         val exampleSkills = listOf(
-            Skill(
+            SimpleSkill(
                 id = "1",
                 title = "Matemáticas básicas",
                 description = "Ayudo con álgebra, geometría y cálculo básico. Explico conceptos claros y ejercicios prácticos.",
@@ -321,7 +332,7 @@ class Busqueda : AppCompatActivity() {
                 userId = "user1",
                 userName = "María García"
             ),
-            Skill(
+            SimpleSkill(
                 id = "2",
                 title = "Python para principiantes",
                 description = "Aprende programación desde cero. Incluye proyectos prácticos y ejercicios.",
@@ -331,7 +342,7 @@ class Busqueda : AppCompatActivity() {
                 userId = "user2",
                 userName = "Carlos López"
             ),
-            Skill(
+            SimpleSkill(
                 id = "3",
                 title = "Inglés conversacional",
                 description = "Practica conversación en inglés. Mejora tu fluidez y confianza al hablar.",
@@ -340,6 +351,26 @@ class Busqueda : AppCompatActivity() {
                 modalidad = "Híbrida",
                 userId = "user3",
                 userName = "Ana Ruiz"
+            ),
+            SimpleSkill(
+                id = "4",
+                title = "Guitarra para principiantes",
+                description = "Aprende a tocar guitarra desde cero. Incluye acordes básicos y canciones populares.",
+                category = "Arte",
+                price = 7.0,
+                modalidad = "Presencial",
+                userId = "user4",
+                userName = "Pedro Música"
+            ),
+            SimpleSkill(
+                id = "5",
+                title = "Cálculo diferencial",
+                description = "Matemáticas avanzadas: límites, derivadas y aplicaciones prácticas.",
+                category = "Matemáticas",
+                price = 12.0,
+                modalidad = "Virtual",
+                userId = "user5",
+                userName = "Ana Números"
             )
         )
 
@@ -351,22 +382,6 @@ class Busqueda : AppCompatActivity() {
         setupOriginalCards()
 
         applyAllFilters()
-
-        /*
-        // Para usar con Firebase cuando esté disponible:
-        SkillRepository.getAllSkills()
-            .addOnSuccessListener { skills ->
-                progressBar.visibility = View.GONE
-                allSkills.clear()
-                allSkills.addAll(skills)
-                setupOriginalCards()
-                applyAllFilters()
-            }
-            .addOnFailureListener { e ->
-                progressBar.visibility = View.GONE
-                Toast.makeText(this, "Error al cargar habilidades: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        */
     }
 
     private fun setupOriginalCards() {
@@ -483,7 +498,7 @@ class Busqueda : AppCompatActivity() {
         cardIngles?.visibility = if (filteredTitles.contains("inglés conversacional")) View.VISIBLE else View.GONE
     }
 
-    private fun createSkillCard(skill: Skill): LinearLayout {
+    private fun createSkillCard(skill: SimpleSkill): LinearLayout {
         val cardLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(getColor(android.R.color.white))
