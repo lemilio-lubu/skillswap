@@ -101,4 +101,15 @@ object SkillRepository {
             .endAt(query + "\uf8ff")
             .get()
     }
+
+    /**
+     * Get all active skills excluding those from a specific user
+     */
+    fun getActiveSkillsExcludingUser(excludeUserId: String): Task<QuerySnapshot> {
+        return FirebaseManager.firestore
+            .collection(SKILLS_COLLECTION)
+            .whereEqualTo("active", true)
+            .whereNotEqualTo("userId", excludeUserId)
+            .get()
+    }
 }

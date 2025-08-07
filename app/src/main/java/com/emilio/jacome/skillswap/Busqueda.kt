@@ -10,21 +10,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import com.emilio.jacome.skillswap.utils.Constants
 import com.emilio.jacome.skillswap.utils.SkillRepository
-import com.emilio.jacome.skillswap.utils.UserRepository
 import com.emilio.jacome.skillswap.model.Skill
-import com.emilio.jacome.skillswap.model.User
 import com.google.firebase.firestore.QuerySnapshot
 
 class Busqueda : AppCompatActivity() {
 
     // Views principales
     private lateinit var etBuscar: EditText
-    private lateinit var layoutSugerencias: LinearLayout
     private lateinit var scrollViewContent: ScrollView
     private lateinit var skillsContainer: LinearLayout
     private lateinit var progressBar: ProgressBar
     private lateinit var tvNoResultados: LinearLayout
     private lateinit var tvResultadosContador: TextView
+
 
     // Contenedor de categorías
     private lateinit var categoriesContainer: LinearLayout
@@ -32,7 +30,6 @@ class Busqueda : AppCompatActivity() {
     // Data
     private var allSkills = mutableListOf<Skill>()
     private var filteredSkills = mutableListOf<Skill>()
-    private var allUsers = mutableListOf<User>()
     private var selectedCategory = "Todas"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,19 +40,17 @@ class Busqueda : AppCompatActivity() {
         setupSearchFunctionality()
         setupCategoryFilters()
         setupNavigationButtons()
-        loadUsersAndSkills()
+        loadSkills()
     }
 
     private fun initViews() {
         // Views de búsqueda
         etBuscar = findViewById(R.id.et_buscar)
-        layoutSugerencias = findViewById(R.id.layout_sugerencias)
         scrollViewContent = findViewById(R.id.scroll_view_content)
         skillsContainer = findViewById(R.id.skills_container)
         progressBar = findViewById(R.id.progress_bar)
         tvNoResultados = findViewById(R.id.tv_no_resultados)
         tvResultadosContador = findViewById(R.id.tv_resultados_contador)
-
         // Contenedor de categorías
         categoriesContainer = findViewById(R.id.categories_container)
     }
@@ -77,23 +72,11 @@ class Busqueda : AppCompatActivity() {
                 val query = s.toString().trim()
                 if (query.length >= 2) {
                     filterSkills(query)
-                    showSugerencias(query)
-                } else {
-                    hideSugerencias()
-                    if (query.isEmpty()) {
-                        filterSkillsByCategory()
-                    }
+                } else if (query.isEmpty()) {
+                    filterSkillsByCategory()
                 }
             }
         })
-
-        etBuscar.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && etBuscar.text.toString().length >= 2) {
-                showSugerencias(etBuscar.text.toString())
-            } else {
-                hideSugerencias()
-            }
-        }
     }
 
     private fun setupCategoryFilters() {
@@ -185,14 +168,12 @@ class Busqueda : AppCompatActivity() {
             when {
                 normalizedDescription.contains(normalizedQuery) -> score += 40
             }
-
             // Buscar en categoría (peso medio)
             val normalizedCategory = normalizeText(skill.category)
             when {
                 normalizedCategory == normalizedQuery -> score += 70
                 normalizedCategory.contains(normalizedQuery) -> score += 50
             }
-
             // Buscar en nombre del instructor (peso bajo)
             val normalizedUserName = normalizeText(skill.userName)
             when {
@@ -208,7 +189,6 @@ class Busqueda : AppCompatActivity() {
                     normalizedUniversity.contains(normalizedQuery) -> score += 25
                 }
             }
-
             // Solo incluir resultados con score > 0
             if (score > 0) {
                 searchResults[skill] = score
@@ -241,6 +221,7 @@ class Busqueda : AppCompatActivity() {
         filteredSkills.clear()
 
         filteredSkills.addAll(allSkills.filter { skill ->
+            val isNotCurrentUser = skill.userId != FirebaseManager.getCurrentUserId()
             val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
             matchesCategory
         })
@@ -335,17 +316,16 @@ class Busqueda : AppCompatActivity() {
         return sugerencias.toList()
             .sortedWith(compareBy({ !normalizeText(it).startsWith(normalizedQuery) }, { it }))
     }
-
+    
     private fun normalizeText(text: String): String {
         return text.lowercase()
             .replace("á", "a").replace("é", "e").replace("í", "i")
             .replace("ó", "o").replace("ú", "u").replace("ñ", "n")
     }
 
-    private fun loadUsersAndSkills() {
+    private fun loadSkills() {
         progressBar.visibility = View.VISIBLE
         val currentUserId = FirebaseManager.getCurrentUserId()
-
         // Cargar habilidades activas únicamente (excluyendo las del usuario actual)
         SkillRepository.getAllActiveSkills()
             .addOnSuccessListener { skillSnapshot ->
@@ -419,7 +399,6 @@ class Busqueda : AppCompatActivity() {
                         .ifEmpty { "U" }
                 }
             }
-        }
     }
 
     private fun updateSkillsDisplay() {
@@ -454,7 +433,7 @@ class Busqueda : AppCompatActivity() {
             }
         }
     }
-
+    
     private fun createSkillCard(skill: Skill): LinearLayout {
         val cardLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -508,15 +487,17 @@ class Busqueda : AppCompatActivity() {
             )
         }
 
-        val instructorInfoLayout = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
+        val instructorView = TextView(this).apply {
+            text = "Por ${skill.userName}"
+            setTextColor(getColor(android.R.color.darker_gray))
+            textSize = 12f
             layoutParams = LinearLayout.LayoutParams(
                 0,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 1f
             )
         }
-
+        
         val instructorView = TextView(this).apply {
             text = "Por ${skill.userName}"
             setTextColor(getColor(R.color.text_secondary))
@@ -535,7 +516,6 @@ class Busqueda : AppCompatActivity() {
 
         instructorInfoLayout.addView(instructorView)
         instructorInfoLayout.addView(universityView)
-
         val priceView = TextView(this).apply {
             text = skill.getFormattedPrice()
             setTextColor(getColor(R.color.accent_primary))
@@ -543,7 +523,7 @@ class Busqueda : AppCompatActivity() {
             setTypeface(null, android.graphics.Typeface.BOLD)
         }
 
-        bottomLayout.addView(instructorInfoLayout)
+        bottomLayout.addView(instructorView)
         bottomLayout.addView(priceView)
 
         cardLayout.addView(titleView)
@@ -552,7 +532,6 @@ class Busqueda : AppCompatActivity() {
 
         // Click listener para navegar al detalle
         cardLayout.setOnClickListener {
-            val user = allUsers.find { it.uid == skill.userId }
             val intent = Intent(this, DetalleHabilidad::class.java)
             intent.putExtra("skill_title", skill.title)
             intent.putExtra("skill_description", skill.description)
@@ -564,10 +543,6 @@ class Busqueda : AppCompatActivity() {
             intent.putExtra("skill_rating", skill.rating.toString())
             intent.putExtra("skill_review_count", skill.reviewCount.toString())
             intent.putExtra("skill_id", skill.id)
-            intent.putExtra("instructor_user_id", skill.userId)
-            intent.putExtra("instructor_university", user?.university ?: "")
-            intent.putExtra("instructor_bio", user?.bio ?: "")
-            intent.putExtra("instructor_email", user?.email ?: "")
             startActivity(intent)
         }
 
