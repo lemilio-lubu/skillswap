@@ -82,4 +82,35 @@ object UserRepository {
                 callback(null)
             }
     }
+    
+    /**
+     * Get all users (for search functionality) - filtering on client side
+     */
+    fun getAllUsers(): Task<QuerySnapshot> {
+        return FirebaseManager.firestore
+            .collection(USERS_COLLECTION)
+            .get()
+    }
+    
+    /**
+     * Search users by name - filtering on client side
+     */
+    fun searchUsersByName(query: String): Task<QuerySnapshot> {
+        return FirebaseManager.firestore
+            .collection(USERS_COLLECTION)
+            .orderBy("name")
+            .startAt(query)
+            .endAt(query + "\uf8ff")
+            .get()
+    }
+    
+    /**
+     * Search users by university
+     */
+    fun searchUsersByUniversity(university: String): Task<QuerySnapshot> {
+        return FirebaseManager.firestore
+            .collection(USERS_COLLECTION)
+            .whereEqualTo("university", university)
+            .get()
+    }
 }

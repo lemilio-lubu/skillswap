@@ -5,6 +5,7 @@
     
     <!-- Color de acento principal estandarizado -->
     <color name="accent_color">#6a6ce9</color>
+    <color name="accent_primary">#6a6ce9</color>
     
     <!-- Colores de fondo estandarizados -->
     <color name="card_background">#FFFFFF</color>

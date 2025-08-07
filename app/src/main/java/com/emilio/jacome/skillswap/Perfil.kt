@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -39,8 +40,8 @@ class Perfil : AppCompatActivity() {
     }
     
     private fun initializeViews() {
-        val btnBack = findViewById<TextView>(R.id.btn_back)
-        val btnConfiguracion = findViewById<TextView>(R.id.btn_configuracion)
+        val btnBack = findViewById<ImageView>(R.id.btn_back)
+        val btnConfiguracion = findViewById<ImageView>(R.id.btn_configuracion)
         btnAgregarHabilidad = findViewById<Button>(R.id.btn_agregar_habilidad)
         
         avatar = findViewById(R.id.avatar)
@@ -56,15 +57,15 @@ class Perfil : AppCompatActivity() {
     }
     
     private fun setupClickListeners() {
-        val btnBack = findViewById<TextView>(R.id.btn_back)
-        val btnLogout = findViewById<TextView>(R.id.btn_configuracion) // Changed from config to logout
+        val btnBack = findViewById<ImageView>(R.id.btn_back)
+        val btnLogout = findViewById<ImageView>(R.id.btn_configuracion) // Logout button with logout icon
         
         btnBack.setOnClickListener {
             finish()
         }
         
         btnLogout.setOnClickListener {
-            // Direct logout prompt - no config menu
+            // Direct logout prompt with clear messaging
             showLogoutConfirmation()
         }
         

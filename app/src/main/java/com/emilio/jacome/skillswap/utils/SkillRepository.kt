@@ -48,7 +48,7 @@ object SkillRepository {
     }
     
     /**
-     * Get all active skills (for browsing)
+     * Get all active skills (for browsing) - filtering on client side
      */
     fun getAllActiveSkills(): Task<QuerySnapshot> {
         return FirebaseManager.firestore
@@ -58,7 +58,7 @@ object SkillRepository {
     }
     
     /**
-     * Search skills by category
+     * Search skills by category - filtering on client side
      */
     fun getSkillsByCategory(category: String): Task<QuerySnapshot> {
         return FirebaseManager.firestore
@@ -90,7 +90,7 @@ object SkillRepository {
     }
     
     /**
-     * Search skills by title or description
+     * Search skills by title or description - filtering on client side
      */
     fun searchSkills(query: String): Task<QuerySnapshot> {
         return FirebaseManager.firestore

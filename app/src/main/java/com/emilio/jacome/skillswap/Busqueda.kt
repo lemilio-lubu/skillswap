@@ -10,7 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import com.emilio.jacome.skillswap.utils.Constants
 import com.emilio.jacome.skillswap.utils.SkillRepository
+import com.emilio.jacome.skillswap.utils.UserRepository
 import com.emilio.jacome.skillswap.model.Skill
+import com.emilio.jacome.skillswap.model.User
 import com.google.firebase.firestore.QuerySnapshot
 
 class Busqueda : AppCompatActivity() {
@@ -23,13 +25,15 @@ class Busqueda : AppCompatActivity() {
     private lateinit var tvNoResultados: LinearLayout
     private lateinit var tvResultadosContador: TextView
 
-    // Filtros de categoría
-    private val categoryFilters = mutableMapOf<TextView, String>()
-
+    // Contenedor de categorías
+    private lateinit var categoriesContainer: LinearLayout
+    
     // Data
     private var allSkills = mutableListOf<Skill>()
     private var filteredSkills = mutableListOf<Skill>()
+    private var allUsers = mutableListOf<User>()
     private var selectedCategory = "Todas"
+    private lateinit var layoutSugerencias: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +54,20 @@ class Busqueda : AppCompatActivity() {
         progressBar = findViewById(R.id.progress_bar)
         tvNoResultados = findViewById(R.id.tv_no_resultados)
         tvResultadosContador = findViewById(R.id.tv_resultados_contador)
+
+        // Contenedor de categorías
+        categoriesContainer = findViewById(R.id.categories_container)
+        
+        // Inicializar layoutSugerencias (crear dinámicamente)
+        layoutSugerencias = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            visibility = View.GONE
+        }
     }
 
     private fun setupNavigationButtons() {
         // Botón de perfil en el header
-        val btnPerfil = findViewById<TextView>(R.id.btn_perfil)
+        val btnPerfil = findViewById<ImageView>(R.id.btn_perfil)
         btnPerfil.setOnClickListener {
             startActivity(Intent(this, Perfil::class.java))
         }
@@ -78,134 +91,140 @@ class Busqueda : AppCompatActivity() {
 
     private fun setupCategoryFilters() {
         // Crear filtros dinámicamente basados en Constants
-        val filtrosScrollLayout = findViewById<LinearLayout>(R.id.filtros_scroll_layout)
-
-        // Limpiar filtros existentes
-        filtrosScrollLayout.removeAllViews()
-        categoryFilters.clear()
-
-        // Agregar filtro "Todas"
-        val filtroTodas = createCategoryFilterView("Todas")
-        filtrosScrollLayout.addView(filtroTodas)
-        categoryFilters[filtroTodas] = "Todas"
-
-        // Agregar filtros de categorías desde Constants
-        Constants.Categories.LIST.forEach { category ->
-            val filtroView = createCategoryFilterView(category)
-            filtrosScrollLayout.addView(filtroView)
-            categoryFilters[filtroView] = category
-        }
-
-        // Configurar click listeners
-        categoryFilters.forEach { (view, category) ->
-            view.setOnClickListener {
-                selectCategoryFilter(view, category)
-                selectedCategory = category
-                filterSkillsByCategory()
-            }
+        val allCategories = listOf("Todas") + Constants.Categories.LIST
+        
+        allCategories.forEach { category ->
+            val filterView = createCategoryFilterView(category)
+            categoriesContainer.addView(filterView)
         }
 
         // Seleccionar "Todas" por defecto
-        categoryFilters.entries.first { it.value == "Todas" }.let { entry ->
-            selectCategoryFilter(entry.key, entry.value)
-        }
+        selectedCategory = "Todas"
+        updateCategoryFilterSelection()
     }
 
-    private fun createCategoryFilterView(categoryName: String): TextView {
+    private fun createCategoryFilterView(category: String): TextView {
         return TextView(this).apply {
-            text = categoryName
-            setPadding(32, 24, 32, 24)
+            text = category
+            setPadding(32, 20, 32, 20)
             textSize = 14f
-            setTextColor(getColor(android.R.color.black))
-            setBackgroundResource(R.drawable.category_filter_background)
+            gravity = android.view.Gravity.CENTER
             isClickable = true
             isFocusable = true
-
+            
+            // Establecer márgenes
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
+                LinearLayout.LayoutParams.MATCH_PARENT
             )
             params.setMargins(0, 0, 16, 0)
             layoutParams = params
+            
+            setOnClickListener {
+                selectedCategory = category
+                updateCategoryFilterSelection()
+                filterSkillsByCategory()
+            }
         }
     }
 
-    private fun selectCategoryFilter(selectedFilter: TextView, category: String) {
-        // Resetear todos los filtros
-        categoryFilters.keys.forEach { filter ->
-            filter.setBackgroundResource(R.drawable.category_filter_background)
-            filter.setTextColor(getColor(android.R.color.black))
+    private fun updateCategoryFilterSelection() {
+        // Actualizar todos los filtros de categoría
+        for (i in 0 until categoriesContainer.childCount) {
+            val filterView = categoriesContainer.getChildAt(i) as TextView
+            val isSelected = filterView.text.toString() == selectedCategory
+            
+            if (isSelected) {
+                filterView.setBackgroundResource(R.drawable.filter_selected_background)
+                filterView.setTextColor(getColor(android.R.color.white))
+            } else {
+                filterView.setBackgroundResource(R.drawable.filter_unselected_background)
+                filterView.setTextColor(getColor(android.R.color.black))
+            }
         }
-
-        // Seleccionar el filtro actual
-        selectedFilter.setBackgroundResource(R.drawable.category_filter_selected)
-        selectedFilter.setTextColor(getColor(android.R.color.white))
     }
 
     private fun filterSkills(query: String) {
         val normalizedQuery = normalizeText(query)
-
-        // Si la consulta es específica, usar búsqueda de Firebase
-        if (query.length >= 3) {
-            performFirebaseSearch(query)
+        
+        if (normalizedQuery.length >= 2) {
+            performSmartSearch(normalizedQuery)
         } else {
-            // Para consultas cortas, filtrar localmente
-            performLocalSearch(normalizedQuery)
+            // Para consultas muy cortas, mostrar todas las habilidades con filtro de categoría
+            applyAllFilters()
         }
     }
 
-    private fun performFirebaseSearch(query: String) {
+    private fun performSmartSearch(normalizedQuery: String) {
         progressBar.visibility = View.VISIBLE
-
-        SkillRepository.searchSkills(query)
-            .addOnSuccessListener { querySnapshot ->
-                progressBar.visibility = View.GONE
-                val searchResults = mutableListOf<Skill>()
-
-                for (document in querySnapshot.documents) {
-                    val skill = document.toObject(Skill::class.java)
-                    skill?.let { searchResults.add(it) }
-                }
-
-                // Filtrar resultados excluyendo habilidades del usuario logueado
-                filteredSkills.clear()
-                filteredSkills.addAll(searchResults.filter { skill ->
-                    val isNotCurrentUser = skill.userId != FirebaseManager.getCurrentUserId()
-                    val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
-
-                    isNotCurrentUser && matchesCategory
-                })
-
-                updateSkillsDisplay()
-            }
-            .addOnFailureListener {
-                progressBar.visibility = View.GONE
-                // En caso de error, usar búsqueda local
-                performLocalSearch(normalizeText(query))
-            }
-    }
-
-    private fun performLocalSearch(normalizedQuery: String) {
         filteredSkills.clear()
 
-        filteredSkills.addAll(allSkills.filter { skill ->
-            val matchesQuery = normalizeText(skill.title).contains(normalizedQuery) ||
-                    normalizeText(skill.description).contains(normalizedQuery) ||
-                    normalizeText(skill.category).contains(normalizedQuery) ||
-                    normalizeText(skill.userName).contains(normalizedQuery)
+        // Algoritmo de búsqueda mejorado con scoring
+        val searchResults = mutableMapOf<Skill, Int>()
 
-            val isNotCurrentUser = skill.userId != FirebaseManager.getCurrentUserId()
-            val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
+        allSkills.forEach { skill ->
+            var score = 0
+            
+            // Buscar en título (mayor peso)
+            val normalizedTitle = normalizeText(skill.title)
+            when {
+                normalizedTitle == normalizedQuery -> score += 100
+                normalizedTitle.startsWith(normalizedQuery) -> score += 80
+                normalizedTitle.contains(normalizedQuery) -> score += 60
+            }
 
-            matchesQuery && isNotCurrentUser && matchesCategory
-        })
+            // Buscar en descripción (peso medio)
+            val normalizedDescription = normalizeText(skill.description)
+            when {
+                normalizedDescription.contains(normalizedQuery) -> score += 40
+            }
 
+            // Buscar en categoría (peso medio)
+            val normalizedCategory = normalizeText(skill.category)
+            when {
+                normalizedCategory == normalizedQuery -> score += 70
+                normalizedCategory.contains(normalizedQuery) -> score += 50
+            }
+
+            // Buscar en nombre del instructor (peso bajo)
+            val normalizedUserName = normalizeText(skill.userName)
+            when {
+                normalizedUserName.contains(normalizedQuery) -> score += 30
+            }
+
+            // Buscar en datos del usuario (peso muy bajo)
+            allUsers.find { it.uid == skill.userId }?.let { user ->
+                val normalizedUserBio = normalizeText(user.bio)
+                val normalizedUniversity = normalizeText(user.university)
+                when {
+                    normalizedUserBio.contains(normalizedQuery) -> score += 20
+                    normalizedUniversity.contains(normalizedQuery) -> score += 25
+                }
+            }
+
+            // Solo incluir resultados con score > 0
+            if (score > 0) {
+                searchResults[skill] = score
+            }
+        }
+
+        // Ordenar por score y aplicar filtro de categoría
+        val sortedResults = searchResults.toList()
+            .sortedByDescending { it.second }
+            .map { it.first }
+            .filter { skill ->
+                selectedCategory == "Todas" || skill.category == selectedCategory
+            }
+
+        filteredSkills.addAll(sortedResults)
+        progressBar.visibility = View.GONE
         updateSkillsDisplay()
     }
 
     private fun filterSkillsByCategory() {
-        if (etBuscar.text.toString().trim().isNotEmpty()) {
-            filterSkills(etBuscar.text.toString().trim())
+        val query = etBuscar.text.toString().trim()
+        if (query.isNotEmpty()) {
+            filterSkills(query)
         } else {
             applyAllFilters()
         }
@@ -217,13 +236,99 @@ class Busqueda : AppCompatActivity() {
         filteredSkills.addAll(allSkills.filter { skill ->
             val isNotCurrentUser = skill.userId != FirebaseManager.getCurrentUserId()
             val matchesCategory = selectedCategory == "Todas" || skill.category == selectedCategory
-
-            isNotCurrentUser && matchesCategory
+            matchesCategory
         })
 
         updateSkillsDisplay()
     }
 
+    private fun showSugerencias(query: String) {
+        layoutSugerencias.removeAllViews()
+        layoutSugerencias.visibility = View.VISIBLE
+
+        val sugerencias = generateSugerencias(query)
+        sugerencias.take(5).forEach { sugerencia ->
+            val tvSugerencia = TextView(this).apply {
+                text = sugerencia
+                setPadding(32, 24, 32, 24)
+                textSize = 14f
+                setTextColor(getColor(R.color.text_primary))
+                setBackgroundResource(android.R.drawable.list_selector_background)
+                setOnClickListener {
+                    etBuscar.setText(sugerencia)
+                    etBuscar.setSelection(sugerencia.length)
+                    hideSugerencias()
+                    filterSkills(sugerencia)
+                }
+            }
+            layoutSugerencias.addView(tvSugerencia)
+        }
+    }
+
+    private fun hideSugerencias() {
+        layoutSugerencias.visibility = View.GONE
+    }
+
+    private fun generateSugerencias(query: String): List<String> {
+        val sugerencias = mutableSetOf<String>()
+        val normalizedQuery = normalizeText(query)
+
+        // Límite para evitar procesar demasiados elementos
+        var skillProcessed = 0
+        var userProcessed = 0
+        val maxProcessed = 50
+
+        // Sugerencias basadas en habilidades existentes (prioritarias)
+        allSkills.take(maxProcessed).forEach { skill ->
+            val normalizedTitle = normalizeText(skill.title)
+            val normalizedCategory = normalizeText(skill.category)
+            val normalizedUserName = normalizeText(skill.userName)
+            
+            when {
+                normalizedTitle.startsWith(normalizedQuery) -> sugerencias.add(skill.title)
+                normalizedTitle.contains(normalizedQuery) -> sugerencias.add(skill.title)
+                normalizedCategory.startsWith(normalizedQuery) -> sugerencias.add(skill.category)
+                normalizedCategory.contains(normalizedQuery) -> sugerencias.add(skill.category)
+                normalizedUserName.startsWith(normalizedQuery) -> sugerencias.add(skill.userName)
+                normalizedUserName.contains(normalizedQuery) -> sugerencias.add(skill.userName)
+            }
+            skillProcessed++
+        }
+
+        // Sugerencias basadas en usuarios registrados (limitadas)
+        allUsers.take(maxProcessed).forEach { user ->
+            val normalizedName = normalizeText(user.name)
+            val normalizedUniversity = normalizeText(user.university)
+            
+            when {
+                normalizedName.startsWith(normalizedQuery) -> sugerencias.add(user.name)
+                normalizedName.contains(normalizedQuery) -> sugerencias.add(user.name)
+                normalizedUniversity.startsWith(normalizedQuery) && user.university.isNotEmpty() -> sugerencias.add(user.university)
+                normalizedUniversity.contains(normalizedQuery) && user.university.isNotEmpty() -> sugerencias.add(user.university)
+            }
+            userProcessed++
+        }
+
+        // Sugerencias comunes (solo si coinciden)
+        val commonSuggestions = listOf(
+            "programación", "python", "java", "javascript", "kotlin", "android",
+            "matemáticas", "álgebra", "cálculo", "estadística", "física",
+            "inglés", "español", "francés", "alemán", "italiano",
+            "guitarra", "piano", "violín", "dibujo", "pintura", "fotografía",
+            "diseño", "marketing", "economía", "contabilidad", "administración"
+        )
+
+        commonSuggestions.forEach { suggestion ->
+            val normalizedSuggestion = normalizeText(suggestion)
+            if (normalizedSuggestion.startsWith(normalizedQuery) || normalizedSuggestion.contains(normalizedQuery)) {
+                sugerencias.add(suggestion)
+            }
+        }
+
+        // Retornar ordenado: primero las que empiezan con la query, luego las que contienen
+        return sugerencias.toList()
+            .sortedWith(compareBy({ !normalizeText(it).startsWith(normalizedQuery) }, { it }))
+    }
 
     private fun normalizeText(text: String): String {
         return text.lowercase()
@@ -233,47 +338,86 @@ class Busqueda : AppCompatActivity() {
 
     private fun loadSkills() {
         progressBar.visibility = View.VISIBLE
+        val currentUserId = FirebaseManager.getCurrentUserId()
 
-        // Cargar skills desde Firebase
+        // Cargar habilidades activas únicamente (excluyendo las del usuario actual)
         SkillRepository.getAllActiveSkills()
-            .addOnSuccessListener { querySnapshot ->
-                progressBar.visibility = View.GONE
+            .addOnSuccessListener { skillSnapshot ->
+                // Procesar skills con validación adicional
                 allSkills.clear()
-
-                for (document in querySnapshot.documents) {
-                    val skill = document.toObject(Skill::class.java)
-                    skill?.let { allSkills.add(it) }
+                for (document in skillSnapshot.documents) {
+                    document.toObject(Skill::class.java)?.let { skill ->
+                        // Doble validación: debe ser activa y no ser del usuario actual
+                        if (skill.active && skill.userId != currentUserId) {
+                            allSkills.add(skill)
+                        }
+                    }
                 }
 
-                applyAllFilters()
+                // Cargar usuarios solo después de tener las skills
+                loadUsers()
             }
-            .addOnFailureListener { exception ->
+            .addOnFailureListener {
                 progressBar.visibility = View.GONE
-                // En caso de error, mostrar mensaje de error
-                showErrorMessage()
+                tvResultadosContador.text = "Error al cargar habilidades"
             }
     }
 
-    private fun showErrorMessage() {
-        allSkills.clear()
-        filteredSkills.clear()
+    private fun loadUsers() {
+        val currentUserId = FirebaseManager.getCurrentUserId()
+        
+        UserRepository.getAllUsers()
+            .addOnSuccessListener { userSnapshot ->
+                progressBar.visibility = View.GONE
+                
+                // Procesar usuarios (excluyendo al usuario actual)
+                allUsers.clear()
+                for (document in userSnapshot.documents) {
+                    document.toObject(User::class.java)?.let { user ->
+                        // Validación adicional: no incluir al usuario actual
+                        if (user.uid != currentUserId) {
+                            allUsers.add(user)
+                        }
+                    }
+                }
 
-        tvResultadosContador.text = "Error al cargar las habilidades"
-        tvNoResultados.visibility = View.VISIBLE
-        scrollViewContent.visibility = View.GONE
+                // Enriquecer skills con información de usuarios y mostrar
+                enrichSkillsWithUserData()
+                applyAllFilters()
+            }
+            .addOnFailureListener {
+                progressBar.visibility = View.GONE
+                // Aunque falle la carga de usuarios, mostrar las skills
+                applyAllFilters()
+            }
+    }
 
-        // Actualizar el mensaje de error para ser más específico
-        val errorIcon = tvNoResultados.getChildAt(0) as TextView
-        val errorTitle = tvNoResultados.getChildAt(1) as TextView
-        val errorMessage = tvNoResultados.getChildAt(2) as TextView
-
-        errorIcon.text = "⚠️"
-        errorTitle.text = "Error de conexión"
-        errorMessage.text = "No se pudieron cargar las habilidades.\nVerifica tu conexión a internet."
+    private fun enrichSkillsWithUserData() {
+        // Crear un mapa para acceso rápido a usuarios
+        val userMap = allUsers.associateBy { it.uid }
+        
+        // Enriquecer información de skills con datos de usuarios
+        allSkills.forEach { skill ->
+            userMap[skill.userId]?.let { user ->
+                // Si el skill no tiene userName o está vacío, usar el del usuario
+                if (skill.userName.isEmpty()) {
+                    skill.userName = user.name.ifEmpty { "Usuario" }
+                }
+                // Si el skill no tiene userAvatar, generar iniciales
+                if (skill.userAvatar.isEmpty()) {
+                    skill.userAvatar = user.name.split(" ")
+                        .mapNotNull { it.firstOrNull()?.toString() }
+                        .take(2)
+                        .joinToString("")
+                        .uppercase()
+                        .ifEmpty { "U" }
+                }
+            }
+        }
     }
 
     private fun updateSkillsDisplay() {
-        // Limpiar todas las cards dinámicas
+        // Limpiar las cards dinámicas
         val dynamicCards = skillsContainer.children.filter { view ->
             view.tag == "dynamic_card"
         }.toList()
@@ -305,47 +449,47 @@ class Busqueda : AppCompatActivity() {
         }
     }
 
-
     private fun createSkillCard(skill: Skill): LinearLayout {
         val cardLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            setBackgroundColor(getColor(android.R.color.white))
+            setBackgroundResource(R.drawable.card_background)
             setPadding(48, 48, 48, 48)
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            params.setMargins(0, 0, 0, 36)
+            params.setMargins(0, 0, 0, 24)
             layoutParams = params
             isClickable = true
             isFocusable = true
-            elevation = 6f
+            elevation = 4f
         }
 
         // Título
         val titleView = TextView(this).apply {
             text = skill.title
-            setTextColor(getColor(android.R.color.black))
-            textSize = 16f
+            setTextColor(getColor(R.color.text_primary))
+            textSize = 18f
             setTypeface(null, android.graphics.Typeface.BOLD)
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            params.setMargins(0, 0, 0, 24)
+            params.setMargins(0, 0, 0, 16)
             layoutParams = params
         }
 
         // Descripción
         val descriptionView = TextView(this).apply {
             text = skill.description
-            setTextColor(getColor(android.R.color.darker_gray))
+            setTextColor(getColor(R.color.text_secondary))
             textSize = 14f
+            maxLines = 3
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            params.setMargins(0, 0, 0, 36)
+            params.setMargins(0, 0, 0, 24)
             layoutParams = params
         }
 
@@ -358,25 +502,43 @@ class Busqueda : AppCompatActivity() {
             )
         }
 
-        val instructorView = TextView(this).apply {
-            text = "Por ${skill.userName}"
-            setTextColor(getColor(android.R.color.darker_gray))
-            textSize = 12f
+        // Layout para información del instructor
+        val instructorInfoLayout = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
             layoutParams = LinearLayout.LayoutParams(
                 0,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 1f
             )
         }
-
-        val priceView = TextView(this).apply {
-            text = skill.getFormattedPrice()
-            setTextColor(getColor(android.R.color.holo_blue_light))
-            textSize = 14f
+        
+        val instructorView = TextView(this).apply {
+            text = "Por ${skill.userName}"
+            setTextColor(getColor(R.color.text_secondary))
+            textSize = 13f
             setTypeface(null, android.graphics.Typeface.BOLD)
         }
 
-        bottomLayout.addView(instructorView)
+        // Mostrar universidad del instructor si está disponible
+        val user = allUsers.find { it.uid == skill.userId }
+        val universityView = TextView(this).apply {
+            text = user?.university ?: ""
+            setTextColor(getColor(R.color.text_hint))
+            textSize = 11f
+            visibility = if (user?.university?.isNotEmpty() == true) View.VISIBLE else View.GONE
+        }
+
+        instructorInfoLayout.addView(instructorView)
+        instructorInfoLayout.addView(universityView)
+
+        val priceView = TextView(this).apply {
+            text = skill.getFormattedPrice()
+            setTextColor(getColor(R.color.accent_primary))
+            textSize = 16f
+            setTypeface(null, android.graphics.Typeface.BOLD)
+        }
+
+        bottomLayout.addView(instructorInfoLayout)
         bottomLayout.addView(priceView)
 
         cardLayout.addView(titleView)

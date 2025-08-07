@@ -13,7 +13,7 @@
         android:id="@+id/header_layout"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:background="#5B7CE6"
+        android:background="#6a6ce9"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="16dp"
@@ -33,17 +33,17 @@
             android:textStyle="bold"
             android:gravity="start" />
 
-        <TextView
+        <ImageView
             android:id="@+id/btn_perfil"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@android:color/white"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:clickable="true"
             android:contentDescription="Perfil"
             android:focusable="true"
-            android:gravity="center"
-            android:text="👤"
-            android:textSize="20sp" />
+            android:src="@drawable/ic_profile"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
+            android:layout_marginEnd="4dp" />
 
     </LinearLayout>
 
@@ -72,9 +72,9 @@
         <EditText
             android:id="@+id/et_buscar"
             android:layout_width="0dp"
-            android:layout_height="49dp"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
+            android:background="@drawable/search_background"
             android:hint="Buscar habilidades, instructores, categorías..."
             android:inputType="text"
             android:textColor="#333333"
@@ -83,8 +83,8 @@
             android:paddingStart="12dp"
             android:paddingEnd="12dp" />
 
-    </LinearLayout>
 
+    </LinearLayout>
 
     <!-- Contador de resultados -->
     <TextView
@@ -105,24 +105,27 @@
     <HorizontalScrollView
         android:id="@+id/filtros_scroll"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/white"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
         android:scrollbars="none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_resultados_contador">
 
         <LinearLayout
-            android:id="@+id/filtros_scroll_layout"
+            android:id="@+id/categories_container"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <!-- Los filtros de categoría se agregan dinámicamente aquí -->
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Las categorías se añaden dinámicamente aquí -->
+
         </LinearLayout>
 
     </HorizontalScrollView>
@@ -132,6 +135,7 @@
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:indeterminateTint="#6a6ce9"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -144,7 +148,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintTop_toBottomOf="@id/filtros_scroll"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -156,6 +160,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
+
+            <!-- Las cards de habilidades se añaden dinámicamente aquí -->
+
         </LinearLayout>
 
     </ScrollView>
